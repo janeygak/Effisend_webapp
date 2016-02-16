@@ -7,6 +7,7 @@ from model import Rate
 
 from model import connect_to_db, db
 from server import app
+import csv
 
 
 def load_countries_list():
@@ -58,10 +59,7 @@ def load_rates():
 
     Rate.query.delete()
 
-    for row in open("data_files/rate_data.csv"):
-        row = row.strip()
-        row = row.split(",")
-
+    for row in csv.reader(open("data_files/rate_data.csv")):
         country_code = row[0]
         country_name = row[1]
         region = row[2]
@@ -71,7 +69,12 @@ def load_rates():
         transaction_type = row[6]
         transaction_time = row[7]
         rate_under_200 = float(row[9])
-        rate_over_200 = float(row[11])
+
+        if row[11] == "":
+            rate_over_200 = rate_under_200
+        else:
+            rate_over_200 = float(row[11])
+
         rate_date = row[13]
 
         rate = Rate(country_code=country_code,

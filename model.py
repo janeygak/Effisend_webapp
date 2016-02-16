@@ -49,7 +49,7 @@ class Rate(db.Model):
     transaction_time = db.Column(db.String(200))
     rate_under_200 = db.Column(db.Float)
     rate_over_200 = db.Column(db.Float)
-    rate_date = db.Column(db.DateTime)
+    rate_date = db.Column(db.String(20))
 
     # code = db.Column(db.String(5), db.ForeignKey('companies.code'))
     # company = db.relationship("Company", backref=db.backref("rates", order_by=rate_id))
