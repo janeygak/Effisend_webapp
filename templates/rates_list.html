@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h1>All Rates</h1>
+    {% for rate in rates %}
+{{ rate.code }} - 
+{{ rate.region }} - 
+{{ rate.fee }}<BR>
+{% endfor %}
+
+
+{% endblock %}
