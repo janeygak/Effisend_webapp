@@ -54,9 +54,9 @@ class Rate(db.Model):
     # code = db.Column(db.String(5), db.ForeignKey('companies.code'))
     # company = db.relationship("Company", backref=db.backref("rates", order_by=rate_id))
 
-    def __repr__(self):
+    # def __repr__(self):
 
-        return "<%s - %s - %s>" % (self.code, self.region, self.fee)
+    #     return "<%s - %s - %s>" % (self.code, self.region, self.fee)
 
 
 def connect_to_db(app):

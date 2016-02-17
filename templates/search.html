@@ -258,11 +258,16 @@
     <option value="ZWE">Zimbabwe</option>
 </select>
 
-Amount you want to send: <input type="text" name="amount"><br>
+Amount to send: <input type="text" id="amount" name="amount"><br>
 
 <input type="submit" value="Find me the best rate!">
 
 </form>
 
-
+<script>
+if(!$.isNumeric($('#amount').val())) {
+        alert("All the text boxes must have numeric values!");
+        return false;
+    }
+ </script>
 {% endblock %}

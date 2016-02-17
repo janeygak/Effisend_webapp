@@ -43,7 +43,7 @@ def movie_list():
 
 @app.route('/best_rate', methods=['GET'])
 def best_rate():
-    """Given the country return the best rate/company"""
+    """Given the country return the best rate/company/speed"""
 
     country = request.args.get('country')
     amount = int(request.args.get('amount'))
@@ -55,10 +55,15 @@ def best_rate():
         column_to_use = 'rate_over_200'
         use_under_200 = False
     else:
-        # forward to error page
+        # forward to error
         return "error! too much money. :("
 
-    best_company = str(Rate.query.filter_by(country_code=country).order_by(column_to_use).first().company)
+    result = Rate.query.filter_by(country_code=country).order_by(column_to_use)
+
+    if result.count() == 0:
+        return "No service data for that country :("
+    else:
+        best_company = str(result.first().company)
 
     if use_under_200:
         best_rate = str(Rate.query.filter_by(country_code=country).order_by(column_to_use).first().rate_under_200)
@@ -69,7 +74,32 @@ def best_rate():
 
     total_estimate = estimate_fees + amount
 
-    return render_template("best_rate.html", best_company=best_company, best_rate=best_rate, estimate_fees=estimate_fees, total_estimate=total_estimate)
+    transaction_speed = result.first().transaction_time
+
+    payment_method = result.first().transaction_type
+
+    other_rates = result.offset(1).limit(1).all()
+
+    other_comp = other_rates[0].company
+
+    other_fee = other_rates[0].rate_under_200
+
+    other_estimate_fees = ((float(other_fee) * .01) * amount)
+
+    other_total = ((float(other_fee) * .01) * amount) + amount
+
+    return render_template("best_rate.html",
+                            best_company=best_company,
+                            best_rate=best_rate,
+                            estimate_fees=estimate_fees,
+                            total_estimate=total_estimate,
+                            transaction_speed=transaction_speed,
+                            payment_method=payment_method,
+                            other_rates=other_rates,
+                            other_comp=other_comp,
+                            other_fee=other_fee,
+                            other_estimate_fees=other_estimate_fees,
+                            other_total=other_total)
 
 
 if __name__ == "__main__":
