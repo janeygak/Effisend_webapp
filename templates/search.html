@@ -14,8 +14,6 @@
     <option value="ASM">American Samoa</option>
     <option value="AND">Andorra</option>
     <option value="AGO">Angola</option>
-    <option value="AIA">Anguilla</option>
-    <option value="ATA">Antarctica</option>
     <option value="ATG">Antigua and Barbuda</option>
     <option value="ARG">Argentina</option>
     <option value="ARM">Armenia</option>
@@ -260,14 +258,14 @@
 
 Amount to send: <input type="text" id="amount" name="amount"><br>
 
-<input type="submit" value="Find me the best rate!">
+<input type="submit" id="criteria_submit" value="Find me the best rate!">
 
 </form>
 
 <script>
-if(!$.isNumeric($('#amount').val())) {
-        alert("All the text boxes must have numeric values!");
-        return false;
-    }
+
+$(document).ready(function() {
+};
+
  </script>
 {% endblock %}

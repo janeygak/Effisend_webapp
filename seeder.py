@@ -16,10 +16,7 @@ def load_countries_list():
 
     Country.query.delete()
 
-    for row in open("data_files/country_data.csv"):
-        row = row.strip()
-        row = row.split(",")
-
+    for row in csv.reader(open("data_files/country_data.csv")):
         country_code = row[0]
         name = row[1]
         region = row[2]

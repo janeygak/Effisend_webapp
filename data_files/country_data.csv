@@ -11,7 +11,7 @@ ABW,Aruba,Latin America & Caribbean,High income: nonOECD
 AUS,Australia,East Asia & Pacific,High income: OECD
 AUT,Austria,Europe & Central Asia,High income: OECD
 AZE,Azerbaijan,Europe & Central Asia,Upper middle income
-BHS,"Bahamas, The",Latin America & Caribbean,High income: nonOECD
+BHS,The Bahamas,Latin America & Caribbean,High income: nonOECD
 BHR,Bahrain,Middle East & North Africa,High income: nonOECD
 BGD,Bangladesh,South Asia,Lower middle income
 BRB,Barbados,Latin America & Caribbean,High income: nonOECD
@@ -41,8 +41,8 @@ CHL,Chile,Latin America & Caribbean,High income: OECD
 CHN,China,East Asia & Pacific,Upper middle income
 COL,Colombia,Latin America & Caribbean,Upper middle income
 COM,Comoros,Sub-Saharan Africa,Low income
-ZAR,"Congo, Dem. Rep.",Sub-Saharan Africa,Low income
-COG,"Congo, Rep.",Sub-Saharan Africa,Lower middle income
+ZAR,Democratic Republic of Congo,Sub-Saharan Africa,Low income
+COG,Congo,Sub-Saharan Africa,Lower middle income
 CRI,Costa Rica,Latin America & Caribbean,Upper middle income
 CIV,Côte d'Ivoire,Sub-Saharan Africa,Lower middle income
 HRV,Croatia,Europe & Central Asia,High income: nonOECD
@@ -55,7 +55,7 @@ DJI,Djibouti,Middle East & North Africa,Lower middle income
 DMA,Dominica,Latin America & Caribbean,Upper middle income
 DOM,Dominican Republic,Latin America & Caribbean,Upper middle income
 ECU,Ecuador,Latin America & Caribbean,Upper middle income
-EGY,"Egypt, Arab Rep.",Middle East & North Africa,Lower middle income
+EGY,Egypt,Middle East & North Africa,Lower middle income
 SLV,El Salvador,Latin America & Caribbean,Lower middle income
 GNQ,Equatorial Guinea,Sub-Saharan Africa,High income: nonOECD
 ERI,Eritrea,Sub-Saharan Africa,Low income
@@ -67,7 +67,7 @@ FIN,Finland,Europe & Central Asia,High income: OECD
 FRA,France,Europe & Central Asia,High income: OECD
 PYF,French Polynesia,East Asia & Pacific,High income: nonOECD
 GAB,Gabon,Sub-Saharan Africa,Upper middle income
-GMB,"Gambia, The",Sub-Saharan Africa,Low income
+GMB,Gambia,Sub-Saharan Africa,Low income
 GEO,Georgia,Europe & Central Asia,Lower middle income
 DEU,Germany,Europe & Central Asia,High income: OECD
 GHA,Ghana,Sub-Saharan Africa,Lower middle income
@@ -81,12 +81,12 @@ GNB,Guinea-Bissau,Sub-Saharan Africa,Low income
 GUY,Guyana,Latin America & Caribbean,Lower middle income
 HTI,Haiti,Latin America & Caribbean,Low income
 HND,Honduras,Latin America & Caribbean,Lower middle income
-HKG,"Hong Kong SAR, China",East Asia & Pacific,High income: nonOECD
+HKG,Hong Kong,East Asia & Pacific,High income: nonOECD
 HUN,Hungary,Europe & Central Asia,High income: OECD
 ISL,Iceland,Europe & Central Asia,High income: OECD
 IND,India,South Asia,Lower middle income
 IDN,Indonesia,East Asia & Pacific,Lower middle income
-IRN,"Iran, Islamic Rep.",Middle East & North Africa,Upper middle income
+IRN,Iran,Middle East & North Africa,Upper middle income
 IRQ,Iraq,Middle East & North Africa,Upper middle income
 IRL,Ireland,Europe & Central Asia,High income: OECD
 IMY,Isle of Man,Europe & Central Asia,High income: nonOECD
@@ -98,12 +98,12 @@ JOR,Jordan,Middle East & North Africa,Upper middle income
 KAZ,Kazakhstan,Europe & Central Asia,Upper middle income
 KEN,Kenya,Sub-Saharan Africa,Lower middle income
 KIR,Kiribati,East Asia & Pacific,Lower middle income
-PRK,"Korea, Dem. Rep.",East Asia & Pacific,Low income
-KOR,"Korea, Rep.",East Asia & Pacific,High income: OECD
+PRK,North Korea,East Asia & Pacific,Low income
+KOR,South Korea,East Asia & Pacific,High income: OECD
 KSV,Kosovo,Europe & Central Asia,Lower middle income
 KWT,Kuwait,Middle East & North Africa,High income: nonOECD
 KGZ,Kyrgyz Republic,Europe & Central Asia,Lower middle income
-LAO,Lao PDR,East Asia & Pacific,Lower middle income
+LAO,Laos,East Asia & Pacific,Lower middle income
 LVA,Latvia,Europe & Central Asia,High income: nonOECD
 LBN,Lebanon,Middle East & North Africa,Upper middle income
 LSO,Lesotho,Sub-Saharan Africa,Lower middle income
@@ -112,8 +112,8 @@ LBY,Libya,Middle East & North Africa,Upper middle income
 LIE,Liechtenstein,Europe & Central Asia,High income: nonOECD
 LTU,Lithuania,Europe & Central Asia,High income: nonOECD
 LUX,Luxembourg,Europe & Central Asia,High income: OECD
-MAC,"Macao SAR, China",East Asia & Pacific,High income: nonOECD
-MKD,"Macedonia, FYR",Europe & Central Asia,Upper middle income
+MAC,Macao,East Asia & Pacific,High income: nonOECD
+MKD,Macedonia,Europe & Central Asia,Upper middle income
 MDG,Madagascar,Sub-Saharan Africa,Low income
 MWI,Malawi,Sub-Saharan Africa,Low income
 MYS,Malaysia,East Asia & Pacific,Upper middle income
@@ -124,7 +124,7 @@ MHL,Marshall Islands,East Asia & Pacific,Upper middle income
 MRT,Mauritania,Sub-Saharan Africa,Lower middle income
 MUS,Mauritius,Sub-Saharan Africa,Upper middle income
 MEX,Mexico,Latin America & Caribbean,Upper middle income
-FSM,"Micronesia, Fed. Sts.",East Asia & Pacific,Lower middle income
+FSM,Federal States of Micronesia,East Asia & Pacific,Lower middle income
 MDA,Moldova,Europe & Central Asia,Lower middle income
 MCO,Monaco,Europe & Central Asia,High income: nonOECD
 MNG,Mongolia,East Asia & Pacific,Upper middle income
@@ -185,7 +185,7 @@ SWZ,Swaziland,Sub-Saharan Africa,Lower middle income
 SWE,Sweden,Europe & Central Asia,High income: OECD
 CHE,Switzerland,Europe & Central Asia,High income: OECD
 SYR,Syrian Arab Republic,Middle East & North Africa,Lower middle income
-TWN,"Taiwan, China",East Asia & Pacific,High income: nonOECD
+TWN,Taiwan,East Asia & Pacific,High income: nonOECD
 TJK,Tajikistan,Europe & Central Asia,Lower middle income
 TZA,Tanzania,Sub-Saharan Africa,Low income
 THA,Thailand,East Asia & Pacific,Upper middle income
@@ -210,6 +210,6 @@ VEN,"Venezuela, RB",Latin America & Caribbean,High income: nonOECD
 VNM,Vietnam,East Asia & Pacific,Lower middle income
 VIR,Virgin Islands (U.S.),Latin America & Caribbean,High income: nonOECD
 WBG,West Bank and Gaza,Middle East & North Africa,Lower middle income
-YEM,"Yemen, Rep.",Middle East & North Africa,Lower middle income
+YEM,Yemen,Middle East & North Africa,Lower middle income
 ZMB,Zambia,Sub-Saharan Africa,Lower middle income
 ZWE,Zimbabwe,Sub-Saharan Africa,Low income

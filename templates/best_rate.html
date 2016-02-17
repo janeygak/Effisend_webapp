@@ -1,26 +1,29 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <h2>Your Best Rate</h2>
+    <h1>Your Best Rate</h1>
 
+    <h2>{{ best_company }} charges on average {{ best_rate }}% for your transaction.</h2>
 
-<h3>{{ best_company }} charges on average {{ best_rate }}% for your transaction.</h3><BR><BR>
+    <h2>Estimated fees: ${{ estimate_fees }}</h2>
 
-<h2>Estimated fees: ${{ estimate_fees }}</h2>
+    <h2>Total transaction cost: ${{ total_estimate }}</h2>
 
-<h2>Total transaction cost: ${{ total_estimate }}</h2>
+    <h2>Transaction speed: {{ transaction_speed }}</h2>
 
-<h2>Transaction speed: {{ transaction_speed }}</h2>
+    <h2>Send/Receive payment method: {{ payment_method }} </h2>
 
-<h3>Send/Receive payment method: {{ payment_method }} </h3>
+    <BR><BR>
+        <h2>Your Second Best Option:</h2>
 
-<BR><BR>
-    <h2>Other Options:</h2>
+    <h3>{{ second_best_comp }} charges on average {{ second_best_fee }}% for your transaction.</h3>
 
-<h3>{{ other_comp }} charges on average {{ other_fee }}% for your transaction.</h3>
+    <h3>Estimated fees: ${{ second_best_estimate_fees }}</h3>
 
-<h3>Estimated fees: ${{ other_estimate_fees }}
+    <h3>Total transaction cost: ${{ second_best_total }}</h3>
 
-<h3>Total transaction cost: ${{ other_total }}</h3>
+    <h3>Transaction speed: {{ second_best_transaction_speed }}</h3>
+
+    <h3>Send/Receive payment method: {{ second_best_payment_method }}</h4>
 
 {% endblock %}
