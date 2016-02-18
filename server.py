@@ -53,8 +53,11 @@ def best_rate():
     #assigns the users country and amount to variables
     country = request.args.get('country')
     country_name = Country.query.filter_by(country_code=country).one().name
+
+    #save user's country to their browser session
     session['country'] = country_name
 
+    #set the user's amount to a variable
     amount = int(request.args.get('amount'))
 
     #decide which rate to use depending on input amount
@@ -68,17 +71,17 @@ def best_rate():
         # forward to error if amount greater than 3000
         return "error! too much money. :("
 
-    #once column is selected, assign the result to a variable
+    #once rate column is selected, assign the result to a variable
     result = Rate.query.filter_by(country_code=country).order_by(column_to_use)
 
-    #check if inputed country is not in database and return error
+    #check if inputed country is not in database and redirect to sorry page
     if result.count() == 0:
 
         return redirect('/sorry')
     #if country in database, continue query
     else:
         best_company = str(result.first().company)
-
+    #checks 
     if use_under_200:
         best_rate = str(Rate.query.filter_by(country_code=country).order_by(column_to_use).first().rate_under_200)
     else:

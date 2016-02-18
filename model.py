@@ -19,7 +19,7 @@ class Country(db.Model):
 
 
 class Company(db.Model):
-    """Money Transfer Companies, their id, and their URL"""
+    """Money Transfer Companies, their id, and their URL. This table is currently unused."""
 
     __tablename__ = "companies"
 
@@ -34,7 +34,7 @@ class Company(db.Model):
 
 
 class Rate(db.Model):
-    """The rates associated with each company and the regions"""
+    """The rates associated with each country, company, and amount"""
 
     __tablename__ = "rates"
 

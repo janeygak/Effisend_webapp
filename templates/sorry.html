@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Sorry...</h2>
+        <p>We don't have any data on {{ session['country'] }} right now. Please leave your e-mail and we will let you know as soon as we do.<p>
+            <BR><BR>
+
+        <form action>
+        Email: <br>
+         <input type="text" name="email"><br>
+        </form>
+
+{% endblock %}
