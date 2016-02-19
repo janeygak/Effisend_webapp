@@ -4,10 +4,59 @@
 from model import Country
 from model import Company
 from model import Rate
+from model import CountryInflow
+from model import RicePrice
 
 from model import connect_to_db, db
 from server import app
 import csv
+
+
+def load_rice_prices():
+
+    print "World rice prices"
+
+    RicePrice.query.delete()
+
+    for row in csv.reader(open("data_files/worldwide_1kg_rice_prices.csv")):
+        country_name = row[0]
+        rice_price = float(row[1])
+
+        rice_data = RicePrice(country_name=country_name, rice_price=rice_price)
+
+        db.session.add(rice_data)
+
+    db.session.commit()
+
+
+def load_inflows():
+
+    print "Remittance inflows"
+
+    CountryInflow.query.delete()
+
+    for row in csv.reader(open("data_files/world_inflows.csv")):
+        country_name = row[0]
+
+        amt_2014 = row[45].strip(",")
+
+        if row[45] == "..":
+            amt_2014 = None
+        else:
+            amt_2014 = float(amt_2014)
+
+        share_gdp_2014 = row[48].strip("%")
+
+        if row[48] == "..":
+            share_gdp_2014 = None
+        else:
+            share_gdp_2014 = share_gdp_2014
+
+        inflow = CountryInflow(country_name=country_name, amt_2014=amt_2014, share_gdp_2014=share_gdp_2014)
+
+        db.session.add(inflow)
+
+    db.session.commit()
 
 
 def load_countries_list():
@@ -100,6 +149,8 @@ if __name__ == "__main__":
 
     # Import different types of data
 
+    load_rice_prices()
+    load_inflows()
     load_countries_list()
     load_companies_list()
     load_rates()

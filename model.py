@@ -3,6 +3,16 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
+class RicePrice(db.Model):
+    """Average price of one kilo of white rice in country for year 2015"""
+
+    __tablename__ = "rice_prices"
+
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    country_name = db.Column(db.String(200), nullable=False)
+    rice_price = db.Column(db.Float, nullable=False)
+
+
 class Country(db.Model):
     """Every country in the world, the region they belong to, and their income group, according to World Bank"""
 
@@ -57,6 +67,16 @@ class Rate(db.Model):
     # def __repr__(self):
 
     #     return "<%s - %s - %s>" % (self.code, self.region, self.fee)
+
+
+class CountryInflow(db.Model):
+
+    __tablename__ = "worldinflows"
+
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    country_name = db.Column(db.String(100))
+    amt_2014 = db.Column(db.Float, nullable=True)
+    share_gdp_2014 = db.Column(db.String(100), nullable=True)
 
 
 def connect_to_db(app):

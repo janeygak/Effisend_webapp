@@ -3,7 +3,9 @@ from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, redirect, session
 # from flask_debugtoolbar import DebugToolbarExtension
 
-from model import connect_to_db, db, Country, Company, Rate
+from model import connect_to_db, db, Country, Company, Rate, RicePrice
+
+import math
 
 
 app = Flask(__name__)
@@ -32,18 +34,17 @@ def sorry():
 
 @app.route('/search')
 def search():
-    """Show the landing page which allows users to select the country"""
+    """Show the landing page which allows users to select the country and amount they want to send"""
 
     country = request.args.get('country')
     return render_template('search.html', country=country)
 
 
-@app.route('/rates')
-def rates_list():
-    """Show list of rates."""
+@app.route('/stats')
+def world_wide_stats():
+    """charts.js"""
 
-    rates = Rate.query.all()
-    return render_template("rates_list.html", rates=rates)
+    return render_template("stats.html")
 
 
 @app.route('/best_rate', methods=['GET'])
@@ -81,11 +82,11 @@ def best_rate():
     #if country in database, continue query
     else:
         best_company = str(result.first().company)
-    #checks 
+    #assigns what the rate is based on the amount
     if use_under_200:
-        best_rate = str(Rate.query.filter_by(country_code=country).order_by(column_to_use).first().rate_under_200)
+        best_rate = str(result.first().rate_under_200)
     else:
-        best_rate = str(Rate.query.filter_by(country_code=country).order_by(column_to_use).first().rate_over_200)
+        best_rate = str(result.first().rate_over_200)
 
     estimate_fees = ((float(best_rate) * .01) * amount)
 
@@ -109,6 +110,21 @@ def best_rate():
 
     second_best_payment_method = second_best_rate[0].transaction_type
 
+    result_country_rice_price = RicePrice.query.filter_by(country_name=country_name)
+
+    if result_country_rice_price.count() == 0:
+        pass
+    else:
+        amt_of_rice = (amount / country_rice_price.one().rice_price)
+
+        amt_of_rice = (math.ceil(amt_of_rice*100)/100)
+
+        amt_of_rice_whole = int(amt_of_rice)
+
+        days_fed = amt_of_rice / 1.6
+
+        days_fed = int(days_fed)
+
     return render_template("best_rate.html",
                            best_company=best_company,
                            best_rate=best_rate,
@@ -121,7 +137,10 @@ def best_rate():
                            second_best_estimate_fees=second_best_estimate_fees,
                            second_best_total=second_best_total,
                            second_best_transaction_speed=second_best_transaction_speed,
-                           second_best_payment_method=second_best_payment_method)
+                           second_best_payment_method=second_best_payment_method,
+                           amt_of_rice_whole=amt_of_rice_whole,
+                           amt_of_rice=amt_of_rice,
+                           days_fed=days_fed)
 
 
 if __name__ == "__main__":

@@ -13,6 +13,13 @@
 
     <h2>Send/Receive payment method: {{ payment_method }} </h2>
 
+    {% if amt_of_rice_whole and days_fed %}
+
+
+    <p>(Did you know? You can buy {{ amt_of_rice_whole }} bags of rice in {{ session['country'] }} with this! That's enough rice for a family of four for {{days_fed}} days.)</p>
+
+    {% endif %}
+
     <BR><BR>
         <h2>Your Second Best Option:</h2>
 
