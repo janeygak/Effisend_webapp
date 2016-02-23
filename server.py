@@ -1,11 +1,13 @@
 from jinja2 import StrictUndefined
 
 from flask import Flask, render_template, request, redirect, session
-# from flask_debugtoolbar import DebugToolbarExtension
+from flask_debugtoolbar import DebugToolbarExtension
 
-from model import connect_to_db, db, Country, Company, Rate, RicePrice
+from model import connect_to_db, db, Country, Rate, RicePrice, CountryCode
 
 import math
+
+from pytz import country_timezones
 
 
 app = Flask(__name__)
@@ -55,11 +57,17 @@ def best_rate():
     country = request.args.get('country')
     country_name = Country.query.filter_by(country_code=country).one().name
 
-    #save user's country to their browser session
+    #save user's country to their browser session for use later
     session['country'] = country_name
+
+    country_code_iso2 = CountryCode.query.filter_by(country_code_iso3=country).one().country_code_iso2
+    session['country_code'] = country_code_iso2
 
     #set the user's amount to a variable
     amount = int(request.args.get('amount'))
+
+    #save user's amount to their browser session for use later
+    session['amount'] = amount
 
     #decide which rate to use depending on input amount
     if amount <= 200:
@@ -112,10 +120,9 @@ def best_rate():
 
     result_country_rice_price = RicePrice.query.filter_by(country_name=country_name)
 
-    if result_country_rice_price.count() == 0:
-        pass
-    else:
-        amt_of_rice = (amount / country_rice_price.one().rice_price)
+    if result_country_rice_price.count() > 0:
+
+        amt_of_rice = (amount / result_country_rice_price.one().rice_price)
 
         amt_of_rice = (math.ceil(amt_of_rice*100)/100)
 
@@ -125,22 +132,46 @@ def best_rate():
 
         days_fed = int(days_fed)
 
-    return render_template("best_rate.html",
-                           best_company=best_company,
-                           best_rate=best_rate,
-                           estimate_fees=estimate_fees,
-                           total_estimate=total_estimate,
-                           transaction_speed=transaction_speed,
-                           payment_method=payment_method,
-                           second_best_comp=second_best_comp,
-                           second_best_fee=second_best_fee,
-                           second_best_estimate_fees=second_best_estimate_fees,
-                           second_best_total=second_best_total,
-                           second_best_transaction_speed=second_best_transaction_speed,
-                           second_best_payment_method=second_best_payment_method,
-                           amt_of_rice_whole=amt_of_rice_whole,
-                           amt_of_rice=amt_of_rice,
-                           days_fed=days_fed)
+        return render_template("best_rate.html",
+                               best_company=best_company,
+                               best_rate=best_rate,
+                               estimate_fees=estimate_fees,
+                               total_estimate=total_estimate,
+                               transaction_speed=transaction_speed,
+                               payment_method=payment_method,
+                               second_best_comp=second_best_comp,
+                               second_best_fee=second_best_fee,
+                               second_best_estimate_fees=second_best_estimate_fees,
+                               second_best_total=second_best_total,
+                               second_best_transaction_speed=second_best_transaction_speed,
+                               second_best_payment_method=second_best_payment_method,
+                               amt_of_rice_whole=amt_of_rice_whole,
+                               amt_of_rice=amt_of_rice,
+                               days_fed=days_fed)
+    else:
+        return render_template("best_rate.html",
+                               best_company=best_company,
+                               best_rate=best_rate,
+                               estimate_fees=estimate_fees,
+                               total_estimate=total_estimate,
+                               transaction_speed=transaction_speed,
+                               payment_method=payment_method,
+                               second_best_comp=second_best_comp,
+                               second_best_fee=second_best_fee,
+                               second_best_estimate_fees=second_best_estimate_fees,
+                               second_best_total=second_best_total,
+                               second_best_transaction_speed=second_best_transaction_speed,
+                               second_best_payment_method=second_best_payment_method,
+                               )
+
+
+@app.route('/select_rate', methods=['GET'])
+def select_rate():
+    """Details on the selected rate"""
+
+    receivers_timezone = (' '.join(country_timezones('')))
+
+    return render_template("select_rate.html")
 
 
 if __name__ == "__main__":
@@ -151,6 +182,6 @@ if __name__ == "__main__":
     connect_to_db(app)
 
     # Use the DebugToolbar
-    # DebugToolbarExtension(app)
+    DebugToolbarExtension(app)
 
     app.run()

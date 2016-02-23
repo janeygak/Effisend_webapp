@@ -6,6 +6,7 @@ from model import Company
 from model import Rate
 from model import CountryInflow
 from model import RicePrice
+from model import CountryCode
 
 from model import connect_to_db, db
 from server import app
@@ -74,6 +75,25 @@ def load_countries_list():
         country = Country(country_code=country_code, name=name, region=region, income_group=income_group)
 
         db.session.add(country)
+
+    db.session.commit()
+
+
+def load_country_codes():
+
+    print "Country Codes"
+
+    CountryCode.query.delete()
+
+    for row in csv.reader(open("data_files/full_country_codes.csv")):
+        name = row[1]
+        currency = row[4]
+        country_code_iso2 = row[6]
+        country_code_iso3 = row[7]
+
+        country_code = CountryCode(country_code_iso2=country_code_iso2, country_code_iso3=country_code_iso3, name=name, currency=currency)
+
+        db.session.add(country_code)
 
     db.session.commit()
 
@@ -149,6 +169,7 @@ if __name__ == "__main__":
 
     # Import different types of data
 
+    load_country_codes()
     load_rice_prices()
     load_inflows()
     load_countries_list()

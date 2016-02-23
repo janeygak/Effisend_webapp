@@ -28,6 +28,18 @@ class Country(db.Model):
         return "<%s - %s\n - %s - %s>" % (self.country_code, self.name, self.region, self.income_group)
 
 
+class CountryCode(db.Model):
+    """Because some data utilizes ISO-2 country codes while others use ISO-3- this contains both for records."""
+
+    __tablename__ = "country_codes"
+
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    country_code_iso2 = db.Column(db.String(25), nullable=False)
+    country_code_iso3 = db.Column(db.String(25), nullable=False)
+    name = db.Column(db.String(200), nullable=False)
+    currency = db.Column(db.String(100), nullable=False)
+
+
 class Company(db.Model):
     """Money Transfer Companies, their id, and their URL. This table is currently unused."""
 

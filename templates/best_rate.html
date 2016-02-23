@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
 
+
+
+
     <h1>Your Best Rate</h1>
 
     <h2>{{ best_company }} charges on average {{ best_rate }}% for your transaction.</h2>
@@ -13,7 +16,9 @@
 
     <h2>Send/Receive payment method: {{ payment_method }} </h2>
 
-    {% if amt_of_rice_whole and days_fed %}
+
+    {% if amt_of_rice %}
+
 
 
     <p>(Did you know? You can buy {{ amt_of_rice_whole }} bags of rice in {{ session['country'] }} with this! That's enough rice for a family of four for {{days_fed}} days.)</p>
@@ -32,5 +37,7 @@
     <h3>Transaction speed: {{ second_best_transaction_speed }}</h3>
 
     <h3>Send/Receive payment method: {{ second_best_payment_method }}</h4>
+
+           
 
 {% endblock %}
