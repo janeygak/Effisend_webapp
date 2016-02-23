@@ -8,8 +8,11 @@
     <!-- Bootstrap -->
     <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/yeti/bootstrap.min.css"
           rel="stylesheet">
-          <link href="templates/grid.css" rel="stylesheet">
-              <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+           <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+             
+              <!-- TODO: move scripts to app.js <script src="scripts/app.js"></script> -->
 
 </head>
 <body>
@@ -19,6 +22,21 @@
         function googleTranslateElementInit() {
           new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
         }
+
+            $(function() {
+                $('.details-link').click(function() {
+                    var detailsLink = $(this)
+                    var detailsSection = detailsLink.parent().find('.rate-details')
+
+                    detailsSection.toggle('slow', function() {
+                        if (detailsSection.is(':visible')) {
+                            detailsLink.text('Hide Details')
+                        } else {
+                            detailsLink.text('Show Details')
+                        }
+                    })
+                })
+            });
                  </script>
                 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
