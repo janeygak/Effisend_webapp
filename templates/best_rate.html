@@ -15,56 +15,63 @@
 
             <h2>Transaction speed: {{ transaction_speed }}</h2>
 
+            <h2>Estimated Receive Time in {{ session['country'] }}: {{ estimated_receive_date_time }}</h2>
+
             <h2>Send/Receive payment method: {{ payment_method }} </h2>
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+              Share
+            </button>
+
+            <div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                     <!-- all things in here are up to you and can be changed -->
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">
+                          <!-- all things in here are up to you and can be changed -->
+                        Share these rates!
+                    </h4>
+                  </div>
+                  <div class="modal-body">
+                     <!-- all things in here are up to you and can be changed -->
+                    <p>One fine body&hellip;</p>
+                  </div>
+                  <div class="modal-footer">
+                      <!-- all things in here are up to you and can be changed -->
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
         </div>
     </div>
     {% if amt_of_rice %}
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-  Launch demo modal
-</button>
 
-<div id="myModal" class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-         <!-- all things in here are up to you and can be changed -->
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">
-              <!-- all things in here are up to you and can be changed -->
-            Modal title
-        </h4>
-      </div>
-      <div class="modal-body">
-         <!-- all things in here are up to you and can be changed -->
-        <p>One fine body&hellip;</p>
-      </div>
-      <div class="modal-footer">
-          <!-- all things in here are up to you and can be changed -->
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 
     <p>(Did you know? You can buy {{ amt_of_rice_whole }} bags of rice in {{ session['country'] }} with this! That's enough rice for a family of four for {{days_fed}} days.)</p>
 
     {% endif %}
 
     <BR><BR>
-        <h2>Your Second Best Option:</h2>
+        <div id="second-best-rate-section">
+            <h2>Your Second Best Option:</h2>
 
-    <h3>{{ second_best_comp }} charges on average {{ second_best_fee }}% for your transaction.</h3>
+            <h3>{{ second_best_comp }} charges on average {{ second_best_fee }}% for your transaction.</h3>
+            <a href="#" class="details-link">Show Details</a>
+            <div class="rate-details" style="display: none;">
+                <h3>Estimated fees: ${{ second_best_estimate_fees }}</h3>
 
-    <h3>Estimated fees: ${{ second_best_estimate_fees }}</h3>
+                <h3>Total transaction cost: ${{ second_best_total }}</h3>
 
-    <h3>Total transaction cost: ${{ second_best_total }}</h3>
+                <h3>Transaction speed: {{ second_best_transaction_speed }}</h3>
 
-    <h3>Transaction speed: {{ second_best_transaction_speed }}</h3>
-
-    <h3>Send/Receive payment method: {{ second_best_payment_method }}</h4>
-
+                <h3>Send/Receive payment method: {{ second_best_payment_method }}</h4>
+            </div>
+        </div>
            
 
 {% endblock %}
