@@ -10,6 +10,8 @@ import math
 from datetime import datetime, timedelta
 from pytz import country_timezones
 from delorean import Delorean
+import os
+from twilio.rest import TwilioRestClient
 
 
 app = Flask(__name__)
@@ -19,14 +21,14 @@ app.secret_key = "ABC"
 
 # Normally, if you use an undefined variable in Jinja2, it fails silently.
 # This is horrible. Fix this so that, instead, it raises an error.
-app.jinja_env.undefined = StrictUndefined
+# app.jinja_env.undefined = StrictUndefined
 
 
 @app.route('/')
 def index():
     """Homepage."""
 
-    return "<html><body>Placeholder for the homepage.</body></html>"
+    return redirect('/search')
 
 
 @app.route('/sorry')
@@ -48,7 +50,27 @@ def search():
 def world_wide_stats():
     """charts.js"""
 
+    input_number = request.args.get('input_number')
+
     return render_template("stats.html")
+
+
+@app.route('/sms', methods=['GET', 'POST'])
+def send_sms():
+    """Send an sms to a phone number"""
+
+    account_sid = os.environ['TWILIO_SID']
+    auth_token = os.environ['TWILIO_TOKEN']
+
+    client = TwilioRestClient(account_sid, auth_token)
+
+    input_number = request.args.get('input_number')
+
+    transferdetails = amount, estimated_receive_date_time
+
+    message = client.messages.create(to=input_number, from_="+14242420403",
+                                     body=transferdetails)
+    return
 
 
 @app.route('/best_rate', methods=['GET'])
@@ -112,28 +134,19 @@ def best_rate():
 
     if transaction_speed == 'Less than one hour':
         current_time_in_utc += timedelta(hours=1)
-        estimated_receive_date_time = (current_time_in_utc.shift(receivers_timezone))
-        estimated_receive_date_time = estimated_receive_date_time.format_datetime(locale='en_US')
     elif transaction_speed == '2 days':
         current_time_in_utc += timedelta(days=2)
-        estimated_receive_date_time = (current_time_in_utc.shift(receivers_timezone))
-        estimated_receive_date_time = estimated_receive_date_time.format_datetime(locale='en_US')
     elif transaction_speed == '3-5 days':
         current_time_in_utc += timedelta(days=5)
-        estimated_receive_date_time = (current_time_in_utc.shift(receivers_timezone))
-        estimated_receive_date_time = estimated_receive_date_time.format_datetime(locale='en_US')
     elif transaction_speed == 'Same day':
         current_time_in_utc += timedelta(hours=2)
-        estimated_receive_date_time = (current_time_in_utc.shift(receivers_timezone))
-        estimated_receive_date_time = estimated_receive_date_time.format_datetime(locale='en_US')
     elif transaction_speed == 'Next day':
         current_time_in_utc += timedelta(hours=24)
-        estimated_receive_date_time = (current_time_in_utc.shift(receivers_timezone))
-        estimated_receive_date_time = estimated_receive_date_time.format_datetime(locale='en_US')
     elif transaction_speed == '6 days or more':
         current_time_in_utc += timedelta(days=6)
-        estimated_receive_date_time = (current_time_in_utc.shift(receivers_timezone))
-        estimated_receive_date_time = estimated_receive_date_time.format_datetime(locale='en_US')
+
+    estimated_receive_date_time = (current_time_in_utc.shift(receivers_timezone))
+    estimated_receive_date_time = estimated_receive_date_time.format_datetime(locale='en_US')
 
     payment_method = result.first().transaction_type
 
@@ -165,16 +178,6 @@ def best_rate():
 
     second_best_payment_method = second_best_rate[0].transaction_type
 
-        # return render_template("other_options.html", second_best_rate=second_best_rate)
-
-        # render_template("best_rate.html", variable_dict=variables_in_a_dictionary)
-
-#         variables_in_a_dictionary = {
-#                 regular_variables = another_value,
-#                 some_variable = value if result_country_rice_price.count() > 0 else None,
-# }
-
-# <expression1> if <condition> else <expression2>
     return render_template("best_rate.html",
                            best_company=best_company,
                            best_rate=best_rate,

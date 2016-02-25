@@ -12,6 +12,17 @@ from model import connect_to_db, db
 from server import app
 import csv
 
+# def load_us_remittance_data():
+#     print "US remittance data"
+
+#     with open('data_files/US-remittance-data.csv', 'r') as csvfile:
+
+#     csvreader = csv.reader(csvfile)
+
+#     csvreader.next()
+
+#     for row in csvreader:
+
 
 def load_rice_prices():
 
