@@ -1,9 +1,9 @@
 from jinja2 import StrictUndefined
 
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, flash, render_template, request, redirect, session, url_for, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import connect_to_db, db, Country, Rate, RicePrice, CountryCode
+from model import connect_to_db, db, Country, Rate, RicePrice, CountryCode, USOutflow
 
 import math
 
@@ -66,11 +66,17 @@ def send_sms():
 
     input_number = request.args.get('input_number')
 
-    transferdetails = amount, estimated_receive_date_time
+    transferdetails = session['amount']
 
     message = client.messages.create(to=input_number, from_="+14242420403",
-                                     body=transferdetails)
-    return
+                                     body="Hi! I am sending: %s" % transferdetails)
+
+    flash('SMS Sent!')
+
+    return "success!"
+
+
+# app.jinja_env.globals.update(send_sms=send_sms)
 
 
 @app.route('/best_rate', methods=['GET'])
@@ -93,10 +99,12 @@ def best_rate():
 
     #save user's amount to their browser session for use later
     session['amount'] = amount
-
+    #get the user's speed preference
+    speed = request.args.get('speed')
+    #get the user's preferred payment method (if any)
+    payment_method = request.args.get('payment_method')
+    #determine the receiver's timezone
     receivers_timezone = (country_timezones(country_code_iso2)[0])
-    # receivers_timezone = (' '.join(country_timezones(session['country_code'])))
-
     #decide which rate to use depending on input amount
     if amount <= 200:
         column_to_use = 'rate_under_200'
@@ -108,8 +116,15 @@ def best_rate():
         # forward to error if amount greater than 3000
         return "error! too much money. :("
 
+    if payment_method != "any" and speed == 'quickly':
+        result = Rate.query.filter(Rate.country_code == country, Rate.transaction_time == 'Less than one hour', Rate.transaction_type.like('%'+payment_method+'%')).order_by(column_to_use)
+    elif payment_method == "any" and speed == 'quickly':
+        result = Rate.query.filter(Rate.country_code == country, Rate.transaction_time == 'Less than one hour').order_by(column_to_use)
+    elif payment_method != "any" and speed != 'quickly':
+        result = Rate.query.filter(Rate.country_code == country, Rate.transaction_type.like('%'+payment_method+'%')).order_by(column_to_use)
+    else:
     #once rate column is selected, assign the result to a variable
-    result = Rate.query.filter_by(country_code=country).order_by(column_to_use)
+        result = Rate.query.filter_by(country_code=country).order_by(column_to_use)
 
     #check if inputed country is not in database and redirect to sorry page
     if result.count() == 0:
@@ -211,5 +226,7 @@ if __name__ == "__main__":
 
     # Use the DebugToolbar
     DebugToolbarExtension(app)
+
+    app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
     app.run()

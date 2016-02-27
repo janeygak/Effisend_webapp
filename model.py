@@ -3,6 +3,16 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
+class USOutflow(db.Model):
+    """USD amount, in millions, that are sent from the USA to other countries"""
+
+    __tablename__ = "us_outflows"
+
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    receiving_country = db.Column(db.String(200), nullable=False)
+    amount = db.Column(db.Integer, nullable=True)
+
+
 class RicePrice(db.Model):
     """Average price of one kilo of white rice in country for year 2015"""
 

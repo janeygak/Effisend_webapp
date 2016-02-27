@@ -7,21 +7,35 @@ from model import Rate
 from model import CountryInflow
 from model import RicePrice
 from model import CountryCode
+from model import USOutflow
 
 from model import connect_to_db, db
 from server import app
 import csv
 
-# def load_us_remittance_data():
-#     print "US remittance data"
 
-#     with open('data_files/US-remittance-data.csv', 'r') as csvfile:
+def load_us_remittance_data():
+    print "US remittance data"
 
-#     csvreader = csv.reader(csvfile)
+    USOutflow.query.delete()
 
-#     csvreader.next()
+    us_remittance = csv.reader(open('data_files/US-remittance-outflows.csv'))
+    rc = us_remittance.next()
+    usd_amount = us_remittance.next()
+    # world = us_remittance.next()
 
-#     for row in csvreader:
+    for i in range(len(rc)):
+        receiving_country = rc[i]
+        if usd_amount[i] == "":
+            amount = None
+        else:
+            amount = usd_amount[i]
+
+        data = USOutflow(receiving_country=receiving_country, amount=amount)
+
+        db.session.add(data)
+
+    db.session.commit()
 
 
 def load_rice_prices():
@@ -180,6 +194,7 @@ if __name__ == "__main__":
 
     # Import different types of data
 
+    load_us_remittance_data()
     load_country_codes()
     load_rice_prices()
     load_inflows()
