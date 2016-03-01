@@ -5,6 +5,7 @@ function showSuccess(result) {
 }
 
 function sendSms(evt) {
+    evt.stopImmediatePropagation();
     evt.preventDefault();
 
     var formInputs = {

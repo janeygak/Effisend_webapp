@@ -48,11 +48,22 @@ def search():
 
 @app.route('/stats')
 def world_wide_stats():
-    """charts.js"""
+    """datamaps"""
+    outflow = db.engine.execute("SELECT country_code_iso3, amount FROM us_outflows JOIN country_codes ON us_outflows.receiving_country = country_codes.name order by amount")
 
-    input_number = request.args.get('input_number')
+    outflow2 = dict((str(y), str(x)) for y, x in outflow)
 
-    return render_template("stats.html")
+    dictlist = []
+
+    for key, value in outflow2.iteritems():
+        temp = [key, value]
+        if value is None:
+            value = 'None'
+        dictlist.append(temp)
+
+    jsonify(outflow2=outflow2)
+
+    return render_template("stats.html", outflow=outflow2)
 
 
 @app.route('/sms', methods=['GET', 'POST'])
@@ -258,13 +269,6 @@ def best_rate():
                            second_best_transaction_speed=second_best_transaction_speed,
                            second_best_payment_method=second_best_payment_method,
                            second_estimated_receive_date_time=second_estimated_receive_date_time)
-
-
-@app.route("/usa-outflows.json")
-def show_usa_outflows():
-    """Jsonifies USA remittance outflow data"""
-
-    return jsonify(outflow_country_data=USOutflow.query.all())
 
 
 if __name__ == "__main__":

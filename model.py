@@ -17,7 +17,7 @@ class USOutflow(db.Model):
 
 
 class RicePrice(db.Model):
-    """Average price of one kilo of white rice in country for year 2015"""
+    """Average price of one kilo of white rice in given country for year 2015"""
 
     __tablename__ = "rice_prices"
 
