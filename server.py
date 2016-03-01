@@ -260,16 +260,11 @@ def best_rate():
                            second_estimated_receive_date_time=second_estimated_receive_date_time)
 
 
-@app.route("/delivery-info.json")
-def get_delivery_info():
-    """Get delivery info."""
+@app.route("/usa-outflows.json")
+def show_usa_outflows():
+    """Jsonifies USA remittance outflow data"""
 
-    delivery_info = {
-        'days': days,
-        'cost': cost
-    }
-
-    return jsonify(delivery_info)
+    return jsonify(outflow_country_data=USOutflow.query.all())
 
 
 if __name__ == "__main__":
