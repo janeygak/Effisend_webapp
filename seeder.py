@@ -6,6 +6,7 @@ from model import Company
 from model import Rate
 from model import CountryInflow
 from model import RicePrice
+from model import WaterPrice
 from model import CountryCode
 from model import USOutflow
 
@@ -51,6 +52,21 @@ def load_rice_prices():
         rice_data = RicePrice(country_name=country_name, rice_price=rice_price)
 
         db.session.add(rice_data)
+
+    db.session.commit()
+
+
+def load_water_prices():
+
+    print "World bottle water prices"
+
+    for row in csv.reader(open("data_files/worldwide_bottle_water_costs.csv")):
+        country_name = row[1]
+        water_price = float(row[2])
+
+        water_data = WaterPrice(country_name=country_name, water_price=water_price)
+
+        db.session.add(water_data)
 
     db.session.commit()
 
@@ -197,6 +213,7 @@ if __name__ == "__main__":
     load_us_remittance_data()
     load_country_codes()
     load_rice_prices()
+    load_water_prices()
     load_inflows()
     load_countries_list()
     load_companies_list()

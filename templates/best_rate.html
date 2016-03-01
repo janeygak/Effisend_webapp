@@ -2,45 +2,100 @@
 {% block content %}
 
 
+<div class="row">
+    <div class="col-xs-12 col-md-8" id="best-rate-section">
 
-    <div id="best-rate-section">
         <h1>Your Best Rate</h1>
 
         <h2>{{ best_company }} charges on average {{ best_rate }}% for your transaction.</h2>
-        <a href="#" class="details-link">Show Details</a>
+    </div>
+    <div class="col-xs-6 col-md-4">
+
+            {% if amt_of_rice %}<BR><BR>
+            <p>(Did you know? You can buy {{ amt_of_rice_whole }} bags of rice in {{ session['country'] }} with ${{ amount }}! That's enough rice for a family of four for {{days_fed}} days.)</p>
+
+            {% endif %}
+    </div>
+</div>
+
+
+  <div class="row">
+    <div class="col-xs-12 col-md-8">
+      <a href="#" class="details-link">Show Details</a>
         <div class="rate-details" style="display: none;">
-            <h2>Estimated fees: ${{ estimate_fees }}</h2>
-
-            <h2>Total transaction cost: ${{ total_estimate }}</h2>
-
-            <h2>Transaction speed: {{ transaction_speed }}</h2>
-
-            <h2>Estimated Receive Time in {{ session['country'] }}: {{ estimated_receive_date_time }}</h2>
-
-            <h2>Send/Receive payment method: {{ payment_method }} </h2>
-
+          <table class="table table-hover">
+            <ul>
+              <tr>
+                <td>
+                    Estimated fees:
+                </td>
+                <td>
+                  ${{ estimate_fees }}
+                </td>
+              </tr>
+              <tr>
+                <td>
+                Total transaction cost:
+                </td>
+                <td>
+                  ${{ total_estimate }}
+                </td>
+              </tr>
+              <tr>
+                <td>
+                Transaction speed: 
+                </td>
+               <td>
+                {{ transaction_speed }}
+                </td>
+              </tr>
+              <tr>
+                <td>
+                Estimated Receive Time in {{ session['country'] }}: 
+                </td>
+                  <td>{{ estimated_receive_date_time }}
+                </td>
+              </tr>
+              <tr>
+              <td>
+            Send/Receive payment method: 
+              </td>
+              <td>
+            {{ payment_method }} 
+              </td>
+            </tr>
+          </ul>
+          </table>
+        </div>
+      </div>
+            <div class="col-xs-6 col-md-4">
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-              Share
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#bestModal">
+              Share this transfer
             </button>
+          
 
-            <div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+            <div id="bestModal" class="modal fade" tabindex="-1" role="dialog">
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
                      <!-- all things in here are up to you and can be changed -->
                     <button id="modalButton" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title">
-                          <!-- all things in here are up to you and can be changed -->
                         Share these rates!
                     </h4>
                   </div>
                   <div class="modal-body">
                      <!-- Inside the modal popup -->
-                        <p><form action="/sms" method="get">
+                        <p><form id="send-sms" action="/sms" method="post">
                             <p>Send to:</p>
-                              <input type="text" name="input_number"><br><br>
+                              <input type="text" id="sendtoNo" name="input_number"><br><br>
+                              <input type="hidden" id="company" name="company" value="{{ best_company }}"><br>
+                              <input type="hidden" id="time" name="time" value="{{ estimated_receive_date_time }}"><BR>
                           <input type="submit" value="Submit">
+                        </form>
+                          <script src="/static/scripts/app.js"></script>
+
                         </p>
                   </div>
                   
@@ -48,30 +103,108 @@
               </div><!-- /.modal-dialog -->
             </div><!-- /.modal -->
         </div>
-    </div>
-    {% if amt_of_rice %}
-
-
-    <p>(Did you know? You can buy {{ amt_of_rice_whole }} bags of rice in {{ session['country'] }} with this! That's enough rice for a family of four for {{days_fed}} days.)</p>
-
-    {% endif %}
+  </div>
 
     <BR><BR>
-        <div id="second-best-rate-section">
+      <div class="row">
+        <div class="col-xs-12 col-md-8" id="second-best-rate-section">
             <h2>Your Second Best Option:</h2>
 
             <h3>{{ second_best_comp }} charges on average {{ second_best_fee }}% for your transaction.</h3>
             <a href="#" class="details-link">Show Details</a>
             <div class="rate-details" style="display: none;">
-                <h3>Estimated fees: ${{ second_best_estimate_fees }}</h3>
 
-                <h3>Total transaction cost: ${{ second_best_total }}</h3>
-
-                <h3>Transaction speed: {{ second_best_transaction_speed }}</h3>
-
-                <h3>Send/Receive payment method: {{ second_best_payment_method }}</h4>
+                          <table class="table table-hover">
+            <ul>
+              <tr>
+                <td>
+                    Estimated fees:
+                </td>
+                <td>
+                  ${{ second_best_estimate_fees }}
+                </td>
+              </tr>
+              <tr>
+                <td>
+                Total transaction cost:
+                </td>
+                <td>
+                  ${{ second_best_total }}
+                </td>
+              </tr>
+              <tr>
+                <td>
+                Transaction speed: 
+                </td>
+               <td>
+                {{ second_best_transaction_speed }}
+                </td>
+              </tr>
+              <tr>
+                <td>
+                Estimated Receive Time in {{ session['country'] }}: 
+                </td>
+                  <td>{{ second_estimated_receive_date_time }}
+                </td>
+              </tr>
+              <tr>
+              <td>
+            Send/Receive payment method: 
+              </td>
+              <td>
+            {{ second_best_payment_method }} 
+              </td>
+            </tr>
+          </ul>
+          </table>
             </div>
+          </div>
+
+              <div class="col-xs-6 col-md-4">
+
+                {% if num_of_bottles %}<BR><BR>
+                  <p>(Did you know? You can buy {{ num_of_bottles }} 1.5 liter bottles of water in {{ session['country'] }} with ${{ amount }}! That's enough water for one person for {{ water_needed }} days.)</p>
+                {% endif %}
+            <!-- Button trigger modal --><BR><BR>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#secondbestModal">
+              Share this transfer
+            </button>
+          
+
+            <div id="secondbestModal" class="modal fade" tabindex="-1" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                     <!-- all things in here are up to you and can be changed -->
+                    <button id="modalButton" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">
+                        Share these rates!
+                    </h4>
+                  </div>
+                  <div class="modal-body">
+                     <!-- Inside the modal popup -->
+                        <p><form id="second-send-sms" action="/sms" method="post">
+                            <p>Send to:</p>
+                              <input type="text" id="sendtoNo2" name="input_number"><br><br>
+                              <input type="hidden" id="company2" name="company" value="{{ second_best_comp }}"><br>
+                              <input type="hidden" id="time2" name="time" value="{{ second_estimated_receive_date_time }}"><BR>
+                          <input type="submit" value="Send SMS!">
+                        </form>
+                          <script src="/static/scripts/app.js"></script>
+
+                        </p>
+                  </div>
+                  
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
         </div>
-           
+
+
+
+        </div>
+      </div>
+    </div>
+  </div>
 
 {% endblock %}

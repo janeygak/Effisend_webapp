@@ -3,7 +3,7 @@ from jinja2 import StrictUndefined
 from flask import Flask, flash, render_template, request, redirect, session, url_for, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import connect_to_db, db, Country, Rate, RicePrice, CountryCode, USOutflow
+from model import connect_to_db, db, Country, Rate, RicePrice, CountryCode, USOutflow, WaterPrice
 
 import math
 
@@ -64,20 +64,21 @@ def send_sms():
 
     client = TwilioRestClient(account_sid, auth_token)
 
-    input_number = request.args.get('input_number')
+    input_number = request.form.get('input_number')
 
-    transferdetails = session['amount']
+    amount = session['amount']
+
+    time = request.form.get('time')
+
+    company = request.form.get('company')
 
     message = client.messages.create(to=input_number, from_="+14242420403",
-                                     body="Hi! I am sending: %s" % transferdetails)
+                                     body="Hi! I am sending you $%s via %s. It should be available at %s" % (amount, company, time))
 
-    flash('SMS Sent!')
-
-    return "success!"
+    return "Your SMS has been sent!"
 
 
 # app.jinja_env.globals.update(send_sms=send_sms)
-
 
 @app.route('/best_rate', methods=['GET'])
 def best_rate():
@@ -97,6 +98,7 @@ def best_rate():
     #set the user's amount to a variable
     amount = int(request.args.get('amount'))
 
+    global amount
     #save user's amount to their browser session for use later
     session['amount'] = amount
     #get the user's speed preference
@@ -105,6 +107,7 @@ def best_rate():
     payment_method = request.args.get('payment_method')
     #determine the receiver's timezone
     receivers_timezone = (country_timezones(country_code_iso2)[0])
+    global receivers_timezone
     #decide which rate to use depending on input amount
     if amount <= 200:
         column_to_use = 'rate_under_200'
@@ -126,6 +129,7 @@ def best_rate():
     #once rate column is selected, assign the result to a variable
         result = Rate.query.filter_by(country_code=country).order_by(column_to_use)
 
+    global result
     #check if inputed country is not in database and redirect to sorry page
     if result.count() == 0:
 
@@ -140,6 +144,8 @@ def best_rate():
         best_rate = str(result.first().rate_over_200)
 
     estimate_fees = ((float(best_rate) * .01) * amount)
+
+    estimate_fees = round(estimate_fees, 2)
 
     total_estimate = estimate_fees + amount
 
@@ -165,6 +171,18 @@ def best_rate():
 
     payment_method = result.first().transaction_type
 
+    result_country_water_price = WaterPrice.query.filter_by(country_name=country_name)
+
+    if result_country_water_price.count() > 0:
+
+        num_of_bottles = (amount / result_country_water_price.one().water_price)
+
+        num_of_bottles = int(num_of_bottles)
+
+        water_needed = num_of_bottles / 2
+
+        water_needed = int(water_needed)
+
     result_country_rice_price = RicePrice.query.filter_by(country_name=country_name)
 
     if result_country_rice_price.count() > 0:
@@ -183,17 +201,44 @@ def best_rate():
 
     second_best_comp = second_best_rate[0].company
 
+    if second_best_comp == result[0].company:
+
+        second_best_rate = result.offset(2).limit(1).all()
+
     second_best_fee = second_best_rate[0].rate_under_200
 
     second_best_estimate_fees = ((float(second_best_fee) * .01) * amount)
 
+    second_best_estimate_fees = round(second_best_estimate_fees, 2)
+
     second_best_total = ((float(second_best_fee) * .01) * amount) + amount
+
+    second_best_total = round(second_best_total, 2)
 
     second_best_transaction_speed = second_best_rate[0].transaction_time
 
     second_best_payment_method = second_best_rate[0].transaction_type
 
+    second_current_time_in_utc = Delorean()
+
+    if second_best_transaction_speed == 'Less than one hour':
+        second_current_time_in_utc += timedelta(hours=1)
+    elif second_best_transaction_speed == '2 days':
+        second_current_time_in_utc += timedelta(days=2)
+    elif second_best_transaction_speed == '3-5 days':
+        second_current_time_in_utc += timedelta(days=5)
+    elif second_best_transaction_speed == 'Same day':
+        second_current_time_in_utc += timedelta(hours=2)
+    elif second_best_transaction_speed == 'Next day':
+        second_current_time_in_utc += timedelta(hours=24)
+    elif second_best_transaction_speed == '6 days or more':
+        second_current_time_in_utc += timedelta(days=6)
+
+    second_estimated_receive_date_time = (second_current_time_in_utc.shift(receivers_timezone))
+    second_estimated_receive_date_time = second_estimated_receive_date_time.format_datetime(locale='en_US')
+
     return render_template("best_rate.html",
+                           amount=amount,
                            best_company=best_company,
                            best_rate=best_rate,
                            estimate_fees=estimate_fees,
@@ -201,20 +246,30 @@ def best_rate():
                            transaction_speed=transaction_speed,
                            estimated_receive_date_time=estimated_receive_date_time,
                            payment_method=payment_method,
+                           num_of_bottles=num_of_bottles,
+                           water_needed=water_needed,
+                           amt_of_rice_whole=amt_of_rice_whole,
+                           amt_of_rice=amt_of_rice,
+                           days_fed=days_fed,
                            second_best_comp=second_best_comp,
                            second_best_fee=second_best_fee,
                            second_best_estimate_fees=second_best_estimate_fees,
                            second_best_total=second_best_total,
                            second_best_transaction_speed=second_best_transaction_speed,
                            second_best_payment_method=second_best_payment_method,
-                           amt_of_rice_whole=amt_of_rice_whole,
-                           amt_of_rice=amt_of_rice,
-                           days_fed=days_fed)
+                           second_estimated_receive_date_time=second_estimated_receive_date_time)
 
 
-# @app.route('/other_options')
-# def show_other_options():
-#     """Details on the other options available"""
+@app.route("/delivery-info.json")
+def get_delivery_info():
+    """Get delivery info."""
+
+    delivery_info = {
+        'days': days,
+        'cost': cost
+    }
+
+    return jsonify(delivery_info)
 
 
 if __name__ == "__main__":

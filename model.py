@@ -12,6 +12,9 @@ class USOutflow(db.Model):
     receiving_country = db.Column(db.String(200), nullable=False)
     amount = db.Column(db.Integer, nullable=True)
 
+    # code = db.Column(db.String(5), db.ForeignKey('companies.code'))
+    # company = db.relationship("Company", backref=db.backref("rates", order_by=rate_id))
+
 
 class RicePrice(db.Model):
     """Average price of one kilo of white rice in country for year 2015"""
@@ -21,6 +24,16 @@ class RicePrice(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     country_name = db.Column(db.String(200), nullable=False)
     rice_price = db.Column(db.Float, nullable=False)
+
+
+class WaterPrice(db.Model):
+    """Average price of one kilo of white rice in country for year 2015"""
+
+    __tablename__ = "water_prices"
+
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    country_name = db.Column(db.String(200), nullable=False)
+    water_price = db.Column(db.Float, nullable=False)
 
 
 class Country(db.Model):
@@ -82,10 +95,6 @@ class Rate(db.Model):
     rate_under_200 = db.Column(db.Float)
     rate_over_200 = db.Column(db.Float)
     rate_date = db.Column(db.String(20))
-
-    # code = db.Column(db.String(5), db.ForeignKey('companies.code'))
-    # company = db.relationship("Company", backref=db.backref("rates", order_by=rate_id))
-
     # def __repr__(self):
 
     #     return "<%s - %s - %s>" % (self.code, self.region, self.fee)
