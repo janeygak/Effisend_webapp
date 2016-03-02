@@ -64,18 +64,14 @@ class CountryCode(db.Model):
 
 
 class Company(db.Model):
-    """Money Transfer Companies, their id, and their URL. This table is currently unused."""
+    """Money Transfer Companies and their URL. """
 
     __tablename__ = "companies"
 
     # company_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    code = db.Column(db.String(5), primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    URL = db.Column(db.String(500), nullable=True)
-
-    def __repr__(self):
-
-        return "<%s - %s \n %s \n %s>" % (self.code, self.name, self.URL)
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    company_name = db.Column(db.String(100), nullable=False)
+    link = db.Column(db.String(600), nullable=True)
 
 
 class Rate(db.Model):

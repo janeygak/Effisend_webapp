@@ -36,7 +36,7 @@
     // color can be whatever you wish
     var paletteScale = d3.scale.linear()
             .domain([minValue,maxValue])
-            .range(["#EFEFFF","#02386F"]); // blue color
+            .range(["#99ccff","#02386F"]); // blue color
     // fill dataset in appropriate format
     series.forEach(function(item){ //
         // item example value ["USA", 70]
@@ -67,7 +67,7 @@
                 // tooltip content
                 return ['<div class="hoverinfo">',
                     '<strong>', geo.properties.name, '</strong>',
-                    '<br>Count: <strong>', data.numberOfThings, '</strong>',
+                    '<br>Count: <strong>', data.numberOfThings, '</strong> million',
                     '</div>'].join('');
             }
         }

@@ -3,7 +3,7 @@ from jinja2 import StrictUndefined
 from flask import Flask, flash, render_template, request, redirect, session, url_for, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import connect_to_db, db, Country, Rate, RicePrice, CountryCode, USOutflow, WaterPrice
+from model import connect_to_db, db, Country, Rate, RicePrice, CountryCode, USOutflow, WaterPrice, Company
 
 import math
 
@@ -160,6 +160,12 @@ def best_rate():
 
     total_estimate = estimate_fees + amount
 
+    best_URL = Company.query.filter(Company.company_name == best_company).one().link
+
+    if best_URL is None:
+
+        best_URL = "http://" + best_company.replace(" ", "") + ".com"
+
     transaction_speed = result.first().transaction_time
 
     current_time_in_utc = Delorean()
@@ -254,6 +260,7 @@ def best_rate():
                            best_rate=best_rate,
                            estimate_fees=estimate_fees,
                            total_estimate=total_estimate,
+                           best_URL=best_URL,
                            transaction_speed=transaction_speed,
                            estimated_receive_date_time=estimated_receive_date_time,
                            payment_method=payment_method,

@@ -145,15 +145,11 @@ def load_companies_list():
 
     Company.query.delete()
 
-    for row in open("data_files/companies.csv"):
-        row = row.strip()
-        row = row.split(",")
+    for row in csv.reader(open("data_files/companies.csv")):
+        company_name = row[0].strip(" ")
+        link = row[1]
 
-        name = row[0]
-        code = row[1]
-        URL = row[2]
-
-        company = Company(name=name, URL=URL, code=code)
+        company = Company(company_name=company_name, link=link)
 
         db.session.add(company)
 
