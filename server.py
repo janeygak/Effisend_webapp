@@ -99,6 +99,7 @@ def best_rate():
     country = request.args.get('country')
     country_name = Country.query.filter_by(country_code=country).one().name
 
+    currency = CountryCode.query.filter_by(country_code_iso3=country).one().currency
     #save user's country to their browser session for use later
     session['country'] = country_name
 
@@ -275,7 +276,8 @@ def best_rate():
                            second_best_total=second_best_total,
                            second_best_transaction_speed=second_best_transaction_speed,
                            second_best_payment_method=second_best_payment_method,
-                           second_estimated_receive_date_time=second_estimated_receive_date_time)
+                           second_estimated_receive_date_time=second_estimated_receive_date_time,
+                           currency=currency)
 
 
 if __name__ == "__main__":

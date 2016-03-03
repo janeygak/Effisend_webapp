@@ -1,13 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <h1>Search</h1>
+<div class="container-fluid" align="center">
+
+    <h1>I want to send</h1>
 
 <form action="/best_rate" method="get">
 
-    I want to send $<input type="text" id="amount" name="amount"> 
-
-    to<BR>
+<BR>
+     $<input type="text" id="amount" name="amount"> 
+<BR>
+    <h2>to</h2><BR>
 
 <select id="country" name="country">
     <option value="AFG">Afghanistan</option>
@@ -260,16 +263,16 @@
 
 <br>
 <BR>
-I want to pay by:<br>
+I want to pay with<br>
 
 <select name="payment_method">
-<option value="any">Any</option>
+<option value="any">Any method</option>
 <option value="Cash">Cash</option>
 <option value="Account">Bank Account</option>
 <option value="Online">Credit/Debit card</option>
 </select>
 <BR><BR>
-I need the funds available:<BR>
+I need the funds available<BR>
   <input type="radio" name="speed" value="anytime" checked> anytime.<br>
  <input type="radio" name="speed" value="quickly"> right now.<BR>
 
@@ -285,4 +288,6 @@ $(document).ready(function() {
 };
 
  </script>
+
+</div>
 {% endblock %}

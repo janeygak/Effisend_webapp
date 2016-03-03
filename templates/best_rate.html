@@ -64,6 +64,26 @@
             {{ payment_method }} 
               </td>
             </tr>
+             <tr>
+              <td>
+            Estimated Receive amount in local currency: 
+              </td>
+              <td class="spinner-wrapper">
+                <div style="position: relative; margin: auto; width: 1%; padding-top: 8px;" id="spinner-target">
+                </div>
+                <script>
+                  var opts = {
+                    lines : 11,
+                    length : 7,
+                    width : 2,radius : 1,scale : 1.00,corners : 1.0,opacity : 0.25,rotate : 0,direction : 1,speed : 1.0,trail : 60,top : 50,left:50
+                  };
+                  var spinner = new Spinner(opts).spin()
+                  var target = document.getElementById('spinner-target')
+
+                  target.appendChild(spinner.el)
+                </script>
+              </td>
+            </tr>
           </ul>
           </table>
         </div>
@@ -97,7 +117,6 @@
                               <input type="hidden" id="time" name="time" value="{{ estimated_receive_date_time }}"><BR>
                           <input type="submit" value="Submit">
                         </form>
-                          <script src="/static/scripts/app.js"></script>
 
                         </p>
                   </div>

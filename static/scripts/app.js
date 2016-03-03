@@ -33,3 +33,32 @@ function sendSms2(evt) {
 }
 
 $("#second-send-sms").on("submit", sendSms2);
+
+var fetchedExchangeRate = false;
+
+$('.details-link').click(function() {
+    var detailsLink = $(this)
+    var detailsSection = detailsLink.parent().find('.rate-details')
+
+    detailsSection.toggle('slow', function() {
+        if (detailsSection.is(':visible')) {
+            detailsLink.text('Hide Details')
+
+             if(!fetchedExchangeRate) {
+                $.get('http://apilayer.net/api/live?access_key=b182bc74787f1644a0fded0084ac5c06&currencies=AFN&source=USD')
+                .done(function(data) {
+                    detailsLink.parent().find('.spinner-wrapper').text(data.quotes['USDAFN'])
+                })
+                .fail(function() {
+                    // clear the spinner
+                    alert('failed');
+                })
+                .always(function() {
+                   fetchedExchangeRate = true; 
+                });
+            }
+        } else {
+            detailsLink.text('Show Details')
+        }
+    })
+})

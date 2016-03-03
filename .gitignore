@@ -4,3 +4,4 @@
 secrets.sh
 *.zip
 ngrok
+node_modules
