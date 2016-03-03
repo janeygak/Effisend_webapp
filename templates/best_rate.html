@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<script>
+  var currency = '{{ currency }}';
+  var amount = {{ amount }};
+</script>
 
 <div class="row">
     <div class="col-xs-12 col-md-8" id="best-rate-section">
@@ -63,7 +67,7 @@
               <td>
             {{ payment_method }} 
               </td>
-            </tr>
+            </tr> 
              <tr>
               <td>
             Estimated Receive amount in local currency: 

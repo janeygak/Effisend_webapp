@@ -45,13 +45,15 @@ $('.details-link').click(function() {
             detailsLink.text('Hide Details')
 
              if(!fetchedExchangeRate) {
-                $.get('http://apilayer.net/api/live?access_key=b182bc74787f1644a0fded0084ac5c06&currencies=AFN&source=USD')
+                $.get('http://apilayer.net/api/live?access_key=b182bc74787f1644a0fded0084ac5c06&currencies=' + currency + '&source=USD')
                 .done(function(data) {
-                    detailsLink.parent().find('.spinner-wrapper').text(data.quotes['USDAFN'])
+                    var quote = data.quotes['USD' + currency]
+                    var convertedAmount = quote ?  parseInt(quote * amount) + ' ' + currency : amount + 'USD'
+
+                    detailsLink.parent().find('.spinner-wrapper').text(convertedAmount)
                 })
                 .fail(function() {
-                    // clear the spinner
-                    alert('failed');
+                    detailsLink.parent().find('.spinner-wrapper').text(amount + 'USD')
                 })
                 .always(function() {
                    fetchedExchangeRate = true; 
