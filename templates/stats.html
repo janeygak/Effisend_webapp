@@ -10,10 +10,10 @@
     var data = {{ outflow|safe }};
     var data2 = {{ col|safe }};
 
-    renderMap(data, 'container1', 'Amount of money sent from the USA: ', 'million');
-    renderMap(data2, 'container2', 'Cost Of Living Index: ');
+    renderMap(data, 'container1', 'Amount of money sent from the USA: ', '#99ccff', '#02386F', 'million');
+    renderMap(data2, 'container2', 'Cost Of Living Index: ', '#ffe2e9', '#800020');
 
-    function renderMap(input, container, preLabel, postLabel) {
+    function renderMap(input, container, preLabel, minColor, maxColor, postLabel) {
         var series = Object.keys(input).map(function(key) {
             return [key, input[key] === 'None' ? null : parseInt(input[key], 10)];
         });
@@ -37,7 +37,7 @@
         // color can be whatever you wish
         var paletteScale = d3.scale.linear()
                 .domain([minValue,maxValue])
-                .range(["#99ccff","#02386F"]); // blue color
+                .range([minColor,maxColor]); // blue color
         // fill dataset in appropriate format
         series.forEach(function(item){ //
             // item example value ["USA", 70]
