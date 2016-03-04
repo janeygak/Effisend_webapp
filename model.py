@@ -11,9 +11,18 @@ class USOutflow(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     receiving_country = db.Column(db.String(200), nullable=False)
     amount = db.Column(db.Integer, nullable=True)
-
     # code = db.Column(db.String(5), db.ForeignKey('companies.code'))
     # company = db.relationship("Company", backref=db.backref("rates", order_by=rate_id))
+
+
+class CostOfLiving(db.Model):
+    """USD amount, in millions, that are sent from the USA to other countries"""
+
+    __tablename__ = "world_coli"
+
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    country_name = db.Column(db.String(200), nullable=True)
+    col = db.Column(db.Float, nullable=True)
 
 
 class RicePrice(db.Model):

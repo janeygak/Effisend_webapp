@@ -3,7 +3,7 @@ from jinja2 import StrictUndefined
 from flask import Flask, flash, render_template, request, redirect, session, url_for, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import connect_to_db, db, Country, Rate, RicePrice, CountryCode, USOutflow, WaterPrice, Company
+from model import connect_to_db, db, Country, Rate, RicePrice, CountryCode, USOutflow, WaterPrice, Company, CostOfLiving
 
 import math
 
@@ -53,18 +53,31 @@ def world_wide_stats():
 
     outflow2 = dict((str(y), str(x)) for y, x in outflow)
 
-    dictlist = []
+    # dictlist = []
 
-    for key, value in outflow2.iteritems():
-        temp = [key, value]
-        if value is None:
-            value = 'None'
-        dictlist.append(temp)
+    # for key, value in outflow2.iteritems():
+    #     temp = [key, value]
+    #     if value is None:
+    #         value = 'None'
+    #     dictlist.append(temp)
 
     jsonify(outflow2=outflow2)
 
-    return render_template("stats.html", outflow=outflow2)
+    col = show_cost_of_living_map()
 
+    return render_template("stats.html", outflow=outflow2, col=col)
+
+
+def show_cost_of_living_map():
+    """code that queries worldwide cost of living database and returns data for d3 map"""
+
+    wwcol = db.engine.execute("SELECT country_code_iso3, col FROM world_coli JOIN country_codes ON world_coli.country_name = country_codes.name order by col")
+
+    wwcol2 = dict((str(y), str(x)) for y, x in wwcol)
+
+    jsonify(wwcol2=wwcol2)
+
+    return wwcol2
 
 @app.route('/sms', methods=['GET', 'POST'])
 def send_sms():
@@ -237,6 +250,12 @@ def best_rate():
 
     second_best_payment_method = second_best_rate[0].transaction_type
 
+    second_best_URL = Company.query.filter(Company.company_name == second_best_comp).one().link
+
+    if second_best_URL is None:
+
+        second_best_URL = "http://" + second_best_comp.replace(" ", "") + ".com"
+
     second_current_time_in_utc = Delorean()
 
     if second_best_transaction_speed == 'Less than one hour':
@@ -277,6 +296,7 @@ def best_rate():
                            second_best_transaction_speed=second_best_transaction_speed,
                            second_best_payment_method=second_best_payment_method,
                            second_estimated_receive_date_time=second_estimated_receive_date_time,
+                           second_best_URL=second_best_URL,
                            currency=currency)
 
 

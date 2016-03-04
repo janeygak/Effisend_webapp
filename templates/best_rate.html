@@ -109,7 +109,7 @@
                      <!-- all things in here are up to you and can be changed -->
                     <button id="modalButton" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title">
-                        Share this transfer!
+                        Did you make the transfer? Let your loved ones know to expect money.
                     </h4>
                   </div>
                   <div class="modal-body">
@@ -192,8 +192,11 @@
                   <p>(Did you know? You can buy {{ num_of_bottles }} 1.5 liter bottles of water in {{ session['country'] }} with ${{ amount }}! That's enough water for one person for {{ water_needed }} days.)</p>
                 {% endif %}
             <!-- Button trigger modal --><BR><BR>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#secondbestModal">
-              Share this transfer
+                     <a href="{{ second_best_URL }}" role="button" class="btn btn-primary" target="newwindow">
+          Make Transfer
+            </a> 
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#secondbestModal">
+              Share Transfer
             </button>
           
 
@@ -204,7 +207,7 @@
                      <!-- all things in here are up to you and can be changed -->
                     <button id="modalButton" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title">
-                        Share these rates!
+                        Share this transfer
                     </h4>
                   </div>
                   <div class="modal-body">

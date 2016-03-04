@@ -3,75 +3,77 @@
 
 
 
-<div id="container1" style="width: 700px; height: 475px; position: relative;"></div><script>
-    var map = new Datamap({element: document.getElementById('container')});
-</script>
-
+<div id="container1" style="width: 700px; height: 475px; position: relative;"></div>
+<div id="container2" style="width: 700px; height: 475px; position: relative;"></div>
 
 <script>
     var data = {{ outflow|safe }};
+    var data2 = {{ col|safe }};
 
-    var series = Object.keys(data).map(function(key) {
-        return [key, data[key] === 'None' ? null : parseInt(data[key], 10)];
-    });
+    renderMap(data, 'container1', 'Amount of money sent from the USA: ', 'million');
+    renderMap(data2, 'container2', 'Cost Of Living Index: ');
 
-    console.log('series', series);
+    function renderMap(input, container, preLabel, postLabel) {
+        var series = Object.keys(input).map(function(key) {
+            return [key, input[key] === 'None' ? null : parseInt(input[key], 10)];
+        });
 
-    // example data from server
-   // var series = outflow_country_data;
-    // Datamaps expect data in format:
-    // { "USA": { "fillColor": "#42a844", numberOfWhatever: 75},
-    //   "FRA": { "fillColor": "#8dc386", numberOfWhatever: 43 } }
-    var dataset = {};
+        // example data from server
+       // var series = outflow_country_data;
+        // Datamaps expect data in format:
+        // { "USA": { "fillColor": "#42a844", numberOfWhatever: 75},
+        //   "FRA": { "fillColor": "#8dc386", numberOfWhatever: 43 } }
+        var dataset = {};
 
 
 
-    // We need to colorize every country based on "numberOfWhatever"
-    // colors should be uniq for every value.
-    // For this purpose we create palette(using min/max series-value)
-    var onlyValues = series.map(function(obj){ return obj[1]; });
-    var minValue = Math.min.apply(null, onlyValues),
-            maxValue = Math.max.apply(null, onlyValues);
-    // create color palette function
-    // color can be whatever you wish
-    var paletteScale = d3.scale.linear()
-            .domain([minValue,maxValue])
-            .range(["#99ccff","#02386F"]); // blue color
-    // fill dataset in appropriate format
-    series.forEach(function(item){ //
-        // item example value ["USA", 70]
-        var iso = item[0],
-                value = item[1];
-        dataset[iso] = { numberOfThings: value, fillColor: paletteScale(value) };
-    });
-    // render map
-    new Datamap({
-        element: document.getElementById('container1'),
-        projection: 'mercator', // big world map
-        // countries don't listed in dataset will be painted with this color
-        fills: { defaultFill: '#F5F5F5' },
-        data: dataset,
-        geographyConfig: {
-            borderColor: '#DEDEDE',
-            highlightBorderWidth: 2,
-            // don't change color on mouse hover
-            highlightFillColor: function(geo) {
-                return geo['fillColor'] || '#F5F5F5';
-            },
-            // only change border
-            highlightBorderColor: '#B7B7B7',
-            // show desired information in tooltip
-            popupTemplate: function(geo, data) {
-                // don't show tooltip if country don't present in dataset
-                if (!data) { return ; }
-                // tooltip content
-                return ['<div class="hoverinfo">',
-                    '<strong>', geo.properties.name, '</strong>',
-                    '<br>Count: <strong>', data.numberOfThings ? data.numberOfThings + ' million' : 'No Data', '</strong>',
-                    '</div>'].join('');
+        // We need to colorize every country based on "numberOfWhatever"
+        // colors should be uniq for every value.
+        // For this purpose we create palette(using min/max series-value)
+        var onlyValues = series.map(function(obj){ return obj[1]; });
+        var minValue = Math.min.apply(null, onlyValues),
+                maxValue = Math.max.apply(null, onlyValues);
+        // create color palette function
+        // color can be whatever you wish
+        var paletteScale = d3.scale.linear()
+                .domain([minValue,maxValue])
+                .range(["#99ccff","#02386F"]); // blue color
+        // fill dataset in appropriate format
+        series.forEach(function(item){ //
+            // item example value ["USA", 70]
+            var iso = item[0],
+                    value = item[1];
+            dataset[iso] = { numberOfThings: value, fillColor: paletteScale(value) };
+        });
+        // render map
+        new Datamap({
+            element: document.getElementById(container),
+            projection: 'mercator', // big world map
+            // countries don't listed in dataset will be painted with this color
+            fills: { defaultFill: '#F5F5F5' },
+            data: dataset,
+            geographyConfig: {
+                borderColor: '#DEDEDE',
+                highlightBorderWidth: 2,
+                // don't change color on mouse hover
+                highlightFillColor: function(geo) {
+                    return geo['fillColor'] || '#F5F5F5';
+                },
+                // only change border
+                highlightBorderColor: '#B7B7B7',
+                // show desired information in tooltip
+                popupTemplate: function(geo, mapData) {
+                    // don't show tooltip if country don't present in dataset
+                    if (!mapData) { return ; }
+                    // tooltip content
+                    return ['<div class="hoverinfo">',
+                        '<strong>', geo.properties.name, '</strong>',
+                        '<br>' + preLabel + '<strong>', mapData.numberOfThings ? mapData.numberOfThings + (postLabel ? ' ' + postLabel : '') : 'No Data', '</strong>',
+                        '</div>'].join('');
+                }
             }
-        }
-    });
+        });
+    }
 </script>
 
 

@@ -9,10 +9,27 @@ from model import RicePrice
 from model import WaterPrice
 from model import CountryCode
 from model import USOutflow
+from model import CostOfLiving
 
 from model import connect_to_db, db
 from server import app
 import csv
+
+
+def load_world_cost_of_living():
+    print "World Cost of Living data"
+
+    CostOfLiving.query.delete()
+
+    for row in csv.reader(open("data_files/world_coli.csv")):
+        country_name = row[0]
+        col = row[1]
+
+        cost_of_living = CostOfLiving(country_name=country_name, col=col)
+
+        db.session.add(cost_of_living)
+
+    db.session.commit()
 
 
 def load_us_remittance_data():
@@ -206,6 +223,7 @@ if __name__ == "__main__":
 
     # Import different types of data
 
+    load_world_cost_of_living()
     load_us_remittance_data()
     load_country_codes()
     load_rice_prices()
