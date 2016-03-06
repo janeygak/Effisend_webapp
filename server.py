@@ -106,8 +106,8 @@ def send_sms():
 
 
 @app.route('/best_rate', methods=['GET'])
-def best_rate():
-    """Given the country and payment method/speed return the best rate/company/etc"""
+def get_user_inputs():
+    """Get user inputs and determine how to calculate their best rates"""
 
     #assigns the users country and amount to variables
     country = request.args.get('country')
@@ -154,6 +154,27 @@ def best_rate():
     else:
         results = Rate.query.filter_by(country_code=country).order_by(column_to_use)
 
+    best_data = get_best_rate(results, amount, use_under_200, receivers_timezone)
+
+    amt_of_rice, days_fed = calculate_rice_price(country_name, amount)
+
+    second_best_data = get_second_best_rate(results, amount, receivers_timezone)
+
+    num_of_bottles, water_needed = calculate_water_price(country_name, amount)
+
+    return render_template("best_rate.html",
+                           amount=amount,
+                           best_data=best_data,
+                           num_of_bottles=num_of_bottles,
+                           water_needed=water_needed,
+                           amt_of_rice=amt_of_rice,
+                           days_fed=days_fed,
+                           second_best_data=second_best_data,
+                           currency=currency)
+
+
+def get_best_rate(results, amount, use_under_200, receivers_timezone):
+
     #if inputed country is not in database then redirect to sorry page
     if results.count() == 0:
 
@@ -176,40 +197,28 @@ def best_rate():
     #query the database for the link to the transfer company website
     best_URL = Company.query.filter(Company.company_name == best_company).one().link
     #if the company is not in the database, create a link using the company name
-    if best_URL is None:
+    if best_URL == '':
 
         best_URL = "http://" + best_company.replace(" ", "") + ".com"
 
+    print best_URL
     #set the queried rate payment method to a variable
     payment_method = results.first().transaction_type
 
-    #set the time the transaction will take to a variable
+    #query how long the method will take
     transaction_speed = results.first().transaction_time
 
     receive_date_time = calculate_receive_time(transaction_speed, receivers_timezone)
 
-    amt_of_rice, days_fed = calculate_rice_price(country_name, amount)
-
-    second_best_data = find_second_best_rate(results, amount, receivers_timezone)
-
-    num_of_bottles, water_needed = calculate_water_price(country_name, amount)
-
-    return render_template("best_rate.html",
-                           amount=amount,
-                           best_company=best_company,
-                           best_rate=best_rate,
-                           estimate_fees=estimate_fees,
-                           total_estimate=total_estimate,
-                           best_URL=best_URL,
-                           transaction_speed=transaction_speed,
-                           receive_date_time=receive_date_time,
-                           payment_method=payment_method,
-                           num_of_bottles=num_of_bottles,
-                           water_needed=water_needed,
-                           amt_of_rice=amt_of_rice,
-                           days_fed=days_fed,
-                           second_best_data=second_best_data,
-                           currency=currency)
+    return {'best_company': best_company,
+            'best_rate': best_rate,
+            'estimate_fees': estimate_fees,
+            'total_estimate': total_estimate,
+            'best_URL': best_URL,
+            'payment_method': payment_method,
+            'transaction_speed': transaction_speed,
+            'receive_date_time': receive_date_time,
+            }
 
 
 def calculate_water_price(country_name, amount):
@@ -256,7 +265,7 @@ def calculate_rice_price(country_name, amount):
     return amt_of_rice, days_fed
 
 
-def find_second_best_rate(results, amount, receivers_timezone):
+def get_second_best_rate(results, amount, receivers_timezone):
     """Given user's preferences, return the second best option"""
     second_best_rate = results.offset(1).limit(1).all()
 
@@ -281,7 +290,7 @@ def find_second_best_rate(results, amount, receivers_timezone):
 
     URL = Company.query.filter(Company.company_name == company).one().link
 
-    if URL is None:
+    if URL == '':
         URL = "http://" + company.replace(" ", "") + ".com"
 
     receive_date_time = calculate_receive_time(transaction_speed, receivers_timezone)
@@ -292,7 +301,7 @@ def find_second_best_rate(results, amount, receivers_timezone):
             'second_best_total': total,
             'second_best_transaction_speed': transaction_speed,
             'second_best_payment_method': payment_method,
-            'second_estimated_receive_date_time': receive_date_time,
+            'receive_date_time': receive_date_time,
             'second_best_URL': URL,
             }
 

@@ -12,7 +12,7 @@
 
         <h1>Your Best Rate</h1>
 
-        <h2>{{ best_company }} charges on average {{ best_rate }}% for your transaction.</h2>
+        <h2>{{ best_data['best_company'] }} charges on average {{ best_data['best_rate'] }}% for your transaction.</h2>
     </div>
     <div class="col-xs-6 col-md-4">
 
@@ -35,7 +35,7 @@
                     Estimated fees:
                 </td>
                 <td>
-                  ${{ estimate_fees }}
+                  ${{ best_data['estimate_fees'] }}
                 </td>
               </tr>
               <tr>
@@ -43,7 +43,7 @@
                 Total transaction cost:
                 </td>
                 <td>
-                  ${{ total_estimate }}
+                  ${{ best_data['total_estimate'] }}
                 </td>
               </tr>
               <tr>
@@ -51,14 +51,14 @@
                 Transaction speed: 
                 </td>
                <td>
-                {{ transaction_speed }}
+                {{ best_data['transaction_speed'] }}
                 </td>
               </tr>
               <tr>
                 <td>
                 Estimated Receive Time in {{ session['country'] }}: 
                 </td>
-                  <td>{{ receive_date_time }}
+                  <td>{{ best_data['receive_date_time'] }}
                 </td>
               </tr>
               <tr>
@@ -66,7 +66,7 @@
             Send/Receive payment method: 
               </td>
               <td>
-            {{ payment_method }} 
+            {{ best_data['payment_method'] }} 
               </td>
             </tr> 
              <tr>
@@ -95,7 +95,7 @@
       </div>
             <div class="col-xs-6 col-md-4">
             <!-- Button trigger modal -->
-                    <a href="{{ best_URL }}" role="button" class="btn btn-primary" target="_newwindow">
+                    <a href="{{ best_data['best_URL'] }}" role="button" class="btn btn-primary" target="_newwindow">
           Make Transfer
             </a> 
             <button type="button" class="btn btn-info" data-toggle="modal" data-target="#bestModal">
@@ -118,8 +118,8 @@
                         <p><form id="send-sms" action="/sms" method="post">
                             <p>Send to:</p>
                               <input type="text" id="sendtoNo" name="input_number"><br><br>
-                              <input type="hidden" id="company" name="company" value="{{ best_company }}"><br>
-                              <input type="hidden" id="time" name="time" value="{{ estimated_receive_date_time }}"><BR>
+                              <input type="hidden" id="company" name="company" value="{{ best_data['best_company'] }}"><br>
+                              <input type="hidden" id="time" name="time" value="{{ best_data['receive_date_time'] }}"><BR>
                           <input type="submit" value="Submit">
                         </form>
 
@@ -236,8 +236,8 @@
                         <p><form id="second-send-sms" action="/sms" method="post">
                             <p>Send to:</p>
                               <input type="text" id="sendtoNo2" name="input_number"><br><br>
-                              <input type="hidden" id="company2" name="company" value="{{ second_best_comp }}"><br>
-                              <input type="hidden" id="time2" name="time" value="{{ second_estimated_receive_date_time }}"><BR>
+                              <input type="hidden" id="company2" name="company" value="{{ second_best_data['second_best_comp'] }}"><br>
+                              <input type="hidden" id="time2" name="time" value="{{ second_best_data['receive_date_time'] }}"><BR>
                           <input type="submit" value="Send SMS!">
                         </form>
                           <script src="/static/scripts/app.js"></script>
