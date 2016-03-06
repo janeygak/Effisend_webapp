@@ -48,9 +48,11 @@ def search():
 
 @app.route('/stats')
 def world_wide_stats():
-    """datamaps"""
-    outflow = db.engine.execute("SELECT country_code_iso3, amount FROM us_outflows JOIN country_codes ON us_outflows.receiving_country = country_codes.name order by amount")
+    """Page with displays amount of money sent from the US and Cost of Living around the world."""
 
+    #Due to the many, many ways country names are written, a SQLAlchemy join is not possible so using native SQL
+    outflow = db.engine.execute("SELECT country_code_iso3, amount FROM us_outflows JOIN country_codes ON us_outflows.receiving_country = country_codes.name order by amount")
+    #pass the data into a dictionary
     outflow2 = dict((str(y), str(x)) for y, x in outflow)
 
     # dictlist = []
@@ -62,14 +64,14 @@ def world_wide_stats():
     #     dictlist.append(temp)
 
     jsonify(outflow2=outflow2)
-
+    #call the cost of living function so both maps can be displayed on one page
     col = show_cost_of_living_map()
 
     return render_template("stats.html", outflow=outflow2, col=col)
 
 
 def show_cost_of_living_map():
-    """code that queries worldwide cost of living database and returns data for d3 map"""
+    """code that queries the cost of living database and returns data for d3 map"""
 
     wwcol = db.engine.execute("SELECT country_code_iso3, col FROM world_coli JOIN country_codes ON world_coli.country_name = country_codes.name order by col")
 
@@ -79,9 +81,10 @@ def show_cost_of_living_map():
 
     return wwcol2
 
+
 @app.route('/sms', methods=['GET', 'POST'])
 def send_sms():
-    """Send an sms to a phone number"""
+    """Twiio API call to send an sms to a phone number"""
 
     account_sid = os.environ['TWILIO_SID']
     auth_token = os.environ['TWILIO_TOKEN']
@@ -102,16 +105,15 @@ def send_sms():
     return "Your SMS has been sent!"
 
 
-# app.jinja_env.globals.update(send_sms=send_sms)
 
 @app.route('/best_rate', methods=['GET'])
 def best_rate():
-    """Given the country return the best rate/company/speed"""
+    """Given the country and payment method/speed return the best rate/company/"""
 
     #assigns the users country and amount to variables
     country = request.args.get('country')
     country_name = Country.query.filter_by(country_code=country).one().name
-
+    #query another table to get the currency code for the receiver's country
     currency = CountryCode.query.filter_by(country_code_iso3=country).one().currency
     #save user's country to their browser session for use later
     session['country'] = country_name
@@ -123,7 +125,6 @@ def best_rate():
     #set the user's amount to a variable
     amount = int(request.args.get('amount'))
 
-    global amount
     #save user's amount to their browser session for use later
     session['amount'] = amount
     #get the user's speed preference
@@ -132,8 +133,8 @@ def best_rate():
     payment_method = request.args.get('payment_method')
     #determine the receiver's timezone
     receivers_timezone = (country_timezones(country_code_iso2)[0])
-    global receivers_timezone
-    #decide which rate to use depending on input amount
+
+    #determine which rate to use depending on input amount
     if amount <= 200:
         column_to_use = 'rate_under_200'
         use_under_200 = True
@@ -144,6 +145,7 @@ def best_rate():
         # forward to error if amount greater than 3000
         return "error! too much money. :("
 
+    #code for querying the database based on user speed and payment type parameters
     if payment_method != "any" and speed == 'quickly':
         result = Rate.query.filter(Rate.country_code == country, Rate.transaction_time == 'Less than one hour', Rate.transaction_type.like('%'+payment_method+'%')).order_by(column_to_use)
     elif payment_method == "any" and speed == 'quickly':
@@ -151,39 +153,39 @@ def best_rate():
     elif payment_method != "any" and speed != 'quickly':
         result = Rate.query.filter(Rate.country_code == country, Rate.transaction_type.like('%'+payment_method+'%')).order_by(column_to_use)
     else:
-    #once rate column is selected, assign the result to a variable
         result = Rate.query.filter_by(country_code=country).order_by(column_to_use)
 
-    global result
-    #check if inputed country is not in database and redirect to sorry page
+    #if inputed country is not in database then redirect to sorry page
     if result.count() == 0:
 
         return redirect('/sorry')
-    #if country in database, continue query
+    #if country in database, continue query for best company
     else:
         best_company = str(result.first().company)
-    #assigns what the rate is based on the amount
+    #assigns what the best rate is based on the given amount
     if use_under_200:
         best_rate = str(result.first().rate_under_200)
     else:
         best_rate = str(result.first().rate_over_200)
 
+    #calculate fees using the rate and user's inputted amount
     estimate_fees = ((float(best_rate) * .01) * amount)
-
+    #and round it to the cents
     estimate_fees = round(estimate_fees, 2)
-
+    #calculate total amount the transaction will cost the sender
     total_estimate = estimate_fees + amount
-
+    #query the database for the link to the transfer company website
     best_URL = Company.query.filter(Company.company_name == best_company).one().link
-
+    #if the company is not in the database, create a link using the company name
     if best_URL is None:
 
         best_URL = "http://" + best_company.replace(" ", "") + ".com"
 
+    #set the time the transaction will take to a variable
     transaction_speed = result.first().transaction_time
-
+    #create a new variable that is set to the current time in UTC
     current_time_in_utc = Delorean()
-
+    #do some time math to determine how long the transaction will take
     if transaction_speed == 'Less than one hour':
         current_time_in_utc += timedelta(hours=1)
     elif transaction_speed == '2 days':
@@ -197,11 +199,14 @@ def best_rate():
     elif transaction_speed == '6 days or more':
         current_time_in_utc += timedelta(days=6)
 
+    #since we were using UTC time as a based, now we shift it over to the receivers timezone
     estimated_receive_date_time = (current_time_in_utc.shift(receivers_timezone))
     estimated_receive_date_time = estimated_receive_date_time.format_datetime(locale='en_US')
 
+    #set the queried rate payment method to a variable
     payment_method = result.first().transaction_type
 
+    #if receiver's country water price is in table, query the table
     result_country_water_price = WaterPrice.query.filter_by(country_name=country_name)
 
     if result_country_water_price.count() > 0:
@@ -209,12 +214,16 @@ def best_rate():
         num_of_bottles = (amount / result_country_water_price.one().water_price)
 
         num_of_bottles = int(num_of_bottles)
-
+        #calculate how much water the user's amount will buy and last for one person
         water_needed = num_of_bottles / 2
 
         water_needed = int(water_needed)
 
+    #query the price of rice table using the receiver's country
     result_country_rice_price = RicePrice.query.filter_by(country_name=country_name)
+
+    """if the receiver's country's rice price is in the table, calculate how much rice the sender's
+    amount will buy and how many days it will feed a family of four"""
 
     if result_country_rice_price.count() > 0:
 
