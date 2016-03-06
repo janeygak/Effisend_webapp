@@ -21,7 +21,12 @@
 </head>
 <body>
     <div class="container">
-                <div id="google_translate_element"></div>
+      <div class="row">
+    <div class="col-xs-12 col-md-8"> 
+                <h3>Effisend <small>Find the best rates to send money back home</small></h3>
+        <BR>
+    </div>
+          <div class="col-xs-6 col-md-4" id="google_translate_element" align="right"></div>
                 <script type="text/javascript">
         function googleTranslateElementInit() {
           new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
@@ -29,12 +34,9 @@
 
                  </script>
                 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    </div>
+        </div>
     
-    <div class="container">
-        <h3>Effisend <small>Find the best rates to send money back home</small></h3>
-        <BR><BR>
-    </div>
+
     {% block content %}
     {% endblock %}
 

@@ -6,7 +6,7 @@
   var amount = {{ amount }};
 </script>
 
-<div class="container">
+
 <div class="row">
     <div class="col-xs-12 col-md-8" id="best-rate-section">
 
@@ -110,7 +110,7 @@
                      <!-- all things in here are up to you and can be changed -->
                     <button id="modalButton" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title">
-                        Did you make the transfer? Let your loved ones know to expect money.
+                        Completed your transfer? Let your loved ones know to expect money.
                     </h4>
                   </div>
                   <div class="modal-body">
@@ -182,6 +182,26 @@
             {{ second_best_payment_method }} 
               </td>
             </tr>
+             <tr>
+              <td>
+            Estimated Receive amount in local currency: 
+              </td>
+              <td class="spinner-wrapper">
+                <div style="position: relative; margin: auto; width: 1%; padding-top: 8px;" id="spinner-target2">
+                </div>
+                <script>
+                  var opts = {
+                    lines : 11,
+                    length : 7,
+                    width : 2,radius : 1,scale : 1.00,corners : 1.0,opacity : 0.25,rotate : 0,direction : 1,speed : 1.0,trail : 60,top : 50,left:50
+                  };
+                  var spinner = new Spinner(opts).spin()
+                  var target = document.getElementById('spinner-target2')
+
+                  target.appendChild(spinner.el)
+                </script>
+              </td>
+            </tr>
           </ul>
           </table>
             </div>
@@ -208,7 +228,7 @@
                      <!-- all things in here are up to you and can be changed -->
                     <button id="modalButton" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title">
-                        Share this transfer
+                        Completed your transfer? Let your loved ones know to expect money.
                     </h4>
                   </div>
                   <div class="modal-body">

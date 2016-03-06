@@ -4,15 +4,22 @@
 <div class="container-fluid" align="center">
 
     <h1>I want to send</h1>
-
-<form action="/best_rate" method="get">
-
 <BR>
-     $<input type="text" id="amount" name="amount"> 
-<BR>
+
+<form class="form-inline" action="/best_rate" method="get">
+
+<div class="form-group">
+    <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+    <div class="input-group">
+      <div class="input-group-addon">$</div>
+      <input type="text" class="form-control" id="amount" placeholder="" name="amount">
+      <div class="input-group-addon">.00</div>
+    </div>
+  </div>
+
     <h2>to</h2><BR>
 
-<select id="country" name="country">
+<select id="country" name="country" class="form-control">
     <option value="AFG">Afghanistan</option>
     <option value="ALA">Åland Islands</option>
     <option value="ALB">Albania</option>

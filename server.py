@@ -3,11 +3,11 @@ from jinja2 import StrictUndefined
 from flask import Flask, flash, render_template, request, redirect, session, url_for, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import connect_to_db, db, Country, Rate, RicePrice, CountryCode, USOutflow, WaterPrice, Company, CostOfLiving
+from model import connect_to_db, db, Country, Rate, RicePrice, CountryCode, WaterPrice, Company, CostOfLiving
 
 import math
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from pytz import country_timezones
 from delorean import Delorean
 import os
@@ -64,7 +64,7 @@ def world_wide_stats():
     #     dictlist.append(temp)
 
     jsonify(outflow2=outflow2)
-    #call the cost of living function so both maps can be displayed on one page
+    #set the cost of living function to be called so both maps can be displayed on one page
     col = show_cost_of_living_map()
 
     return render_template("stats.html", outflow=outflow2, col=col)
@@ -105,10 +105,9 @@ def send_sms():
     return "Your SMS has been sent!"
 
 
-
 @app.route('/best_rate', methods=['GET'])
 def best_rate():
-    """Given the country and payment method/speed return the best rate/company/"""
+    """Given the country and payment method/speed return the best rate/company/etc"""
 
     #assigns the users country and amount to variables
     country = request.args.get('country')
@@ -237,6 +236,38 @@ def best_rate():
 
         days_fed = int(days_fed)
 
+    second_best_data = find_second_best_rate(result, amount, receivers_timezone)
+
+    second_best_comp, second_best_fee, second_best_estimate_fees, second_best_total, second_best_transaction_speed, second_best_payment_method, second_estimated_receive_date_time, second_best_URL = second_best_data
+
+    return render_template("best_rate.html",
+                           amount=amount,
+                           best_company=best_company,
+                           best_rate=best_rate,
+                           estimate_fees=estimate_fees,
+                           total_estimate=total_estimate,
+                           best_URL=best_URL,
+                           transaction_speed=transaction_speed,
+                           estimated_receive_date_time=estimated_receive_date_time,
+                           payment_method=payment_method,
+                           num_of_bottles=num_of_bottles,
+                           water_needed=water_needed,
+                           amt_of_rice_whole=amt_of_rice_whole,
+                           amt_of_rice=amt_of_rice,
+                           days_fed=days_fed,
+                           second_best_comp=second_best_comp,
+                           second_best_fee=second_best_fee,
+                           second_best_estimate_fees=second_best_estimate_fees,
+                           second_best_total=second_best_total,
+                           second_best_transaction_speed=second_best_transaction_speed,
+                           second_best_payment_method=second_best_payment_method,
+                           second_estimated_receive_date_time=second_estimated_receive_date_time,
+                           second_best_URL=second_best_URL,
+                           currency=currency)
+
+
+def find_second_best_rate(result, amount, receivers_timezone):
+    """Given the country, payment method, and speed preference, return the second best option"""
     second_best_rate = result.offset(1).limit(1).all()
 
     second_best_comp = second_best_rate[0].company
@@ -283,30 +314,7 @@ def best_rate():
     second_estimated_receive_date_time = (second_current_time_in_utc.shift(receivers_timezone))
     second_estimated_receive_date_time = second_estimated_receive_date_time.format_datetime(locale='en_US')
 
-    return render_template("best_rate.html",
-                           amount=amount,
-                           best_company=best_company,
-                           best_rate=best_rate,
-                           estimate_fees=estimate_fees,
-                           total_estimate=total_estimate,
-                           best_URL=best_URL,
-                           transaction_speed=transaction_speed,
-                           estimated_receive_date_time=estimated_receive_date_time,
-                           payment_method=payment_method,
-                           num_of_bottles=num_of_bottles,
-                           water_needed=water_needed,
-                           amt_of_rice_whole=amt_of_rice_whole,
-                           amt_of_rice=amt_of_rice,
-                           days_fed=days_fed,
-                           second_best_comp=second_best_comp,
-                           second_best_fee=second_best_fee,
-                           second_best_estimate_fees=second_best_estimate_fees,
-                           second_best_total=second_best_total,
-                           second_best_transaction_speed=second_best_transaction_speed,
-                           second_best_payment_method=second_best_payment_method,
-                           second_estimated_receive_date_time=second_estimated_receive_date_time,
-                           second_best_URL=second_best_URL,
-                           currency=currency)
+    return second_best_comp, second_best_fee, second_best_estimate_fees, second_best_total, second_best_transaction_speed, second_best_payment_method, second_estimated_receive_date_time, second_best_URL
 
 
 if __name__ == "__main__":
