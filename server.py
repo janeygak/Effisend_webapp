@@ -146,26 +146,26 @@ def best_rate():
 
     #code for querying the database based on user speed and payment type parameters
     if payment_method != "any" and speed == 'quickly':
-        result = Rate.query.filter(Rate.country_code == country, Rate.transaction_time == 'Less than one hour', Rate.transaction_type.like('%'+payment_method+'%')).order_by(column_to_use)
+        results = Rate.query.filter(Rate.country_code == country, Rate.transaction_time == 'Less than one hour', Rate.transaction_type.like('%'+payment_method+'%')).order_by(column_to_use)
     elif payment_method == "any" and speed == 'quickly':
-        result = Rate.query.filter(Rate.country_code == country, Rate.transaction_time == 'Less than one hour').order_by(column_to_use)
+        results = Rate.query.filter(Rate.country_code == country, Rate.transaction_time == 'Less than one hour').order_by(column_to_use)
     elif payment_method != "any" and speed != 'quickly':
-        result = Rate.query.filter(Rate.country_code == country, Rate.transaction_type.like('%'+payment_method+'%')).order_by(column_to_use)
+        results = Rate.query.filter(Rate.country_code == country, Rate.transaction_type.like('%'+payment_method+'%')).order_by(column_to_use)
     else:
-        result = Rate.query.filter_by(country_code=country).order_by(column_to_use)
+        results = Rate.query.filter_by(country_code=country).order_by(column_to_use)
 
     #if inputed country is not in database then redirect to sorry page
-    if result.count() == 0:
+    if results.count() == 0:
 
         return redirect('/sorry')
     #if country in database, continue query for best company
     else:
-        best_company = str(result.first().company)
+        best_company = str(results.first().company)
     #assigns what the best rate is based on the given amount
     if use_under_200:
-        best_rate = str(result.first().rate_under_200)
+        best_rate = str(results.first().rate_under_200)
     else:
-        best_rate = str(result.first().rate_over_200)
+        best_rate = str(results.first().rate_over_200)
 
     #calculate fees using the rate and user's inputted amount
     estimate_fees = ((float(best_rate) * .01) * amount)
@@ -181,7 +181,7 @@ def best_rate():
         best_URL = "http://" + best_company.replace(" ", "") + ".com"
 
     #set the queried rate payment method to a variable
-    payment_method = result.first().transaction_type
+    payment_method = results.first().transaction_type
 
     #if receiver's country water price is in table, query the table
     result_country_water_price = WaterPrice.query.filter_by(country_name=country_name)
@@ -214,33 +214,12 @@ def best_rate():
 
         days_fed = int(days_fed)
 
-    second_best_data = find_second_best_rate(result, amount, receivers_timezone)
-
-    # second_best_comp, second_best_fee, second_best_estimate_fees, second_best_total, second_best_transaction_speed, second_best_payment_method, second_estimated_receive_date_time, second_best_URL = second_best_data
+    second_best_data = find_second_best_rate(results, amount, receivers_timezone)
 
     #set the time the transaction will take to a variable
-    transaction_speed = result.first().transaction_time
-    #create a new variable that is set to the current time in UTC
-    current_time_in_utc = Delorean()
-    #do some time math to determine how long the transaction will take
-    if transaction_speed == 'Less than one hour':
-        current_time_in_utc += timedelta(hours=1)
-    elif transaction_speed == '2 days':
-        current_time_in_utc += timedelta(days=2)
-    elif transaction_speed == '3-5 days':
-        current_time_in_utc += timedelta(days=5)
-    elif transaction_speed == 'Same day':
-        current_time_in_utc += timedelta(hours=2)
-    elif transaction_speed == 'Next day':
-        current_time_in_utc += timedelta(hours=24)
-    elif transaction_speed == '6 days or more':
-        current_time_in_utc += timedelta(days=6)
+    transaction_speed = results.first().transaction_time
 
-    #since we were using UTC time as a based, now we shift it over to the receivers timezone
-    estimated_receive_date_time = (current_time_in_utc.shift(receivers_timezone))
-    estimated_receive_date_time = estimated_receive_date_time.format_datetime(locale='en_US')
-
-    print second_best_data
+    receive_date_time = calculate_receive_time(transaction_speed, receivers_timezone)
 
     return render_template("best_rate.html",
                            amount=amount,
@@ -250,7 +229,7 @@ def best_rate():
                            total_estimate=total_estimate,
                            best_URL=best_URL,
                            transaction_speed=transaction_speed,
-                           estimated_receive_date_time=estimated_receive_date_time,
+                           receive_date_time=receive_date_time,
                            payment_method=payment_method,
                            num_of_bottles=num_of_bottles,
                            water_needed=water_needed,
@@ -261,67 +240,68 @@ def best_rate():
                            currency=currency)
 
 
-def find_second_best_rate(result, amount, receivers_timezone):
-    """Given the country, payment method, and speed preference, return the second best option"""
-    second_best_rate = result.offset(1).limit(1).all()
+def find_second_best_rate(results, amount, receivers_timezone):
+    """Given user's preferences, return the second best option"""
+    second_best_rate = results.offset(1).limit(1).all()
 
-    second_best_comp = second_best_rate[0].company
+    company = second_best_rate[0].company
 
-    if second_best_comp == result[0].company:
+    if company == results[0].company:
+        second_best_rate = results.offset(2).limit(1).all()
 
-        second_best_rate = result.offset(2).limit(1).all()
+    fee = second_best_rate[0].rate_under_200
 
-    second_best_fee = second_best_rate[0].rate_under_200
+    estimate_fees = ((float(fee) * .01) * amount)
 
-    second_best_estimate_fees = ((float(second_best_fee) * .01) * amount)
+    estimate_fees = round(estimate_fees, 2)
 
-    second_best_estimate_fees = round(second_best_estimate_fees, 2)
+    total = ((float(fee) * .01) * amount) + amount
 
-    second_best_total = ((float(second_best_fee) * .01) * amount) + amount
+    total = round(total, 2)
 
-    second_best_total = round(second_best_total, 2)
+    transaction_speed = second_best_rate[0].transaction_time
 
-    second_best_transaction_speed = second_best_rate[0].transaction_time
+    payment_method = second_best_rate[0].transaction_type
 
-    second_best_payment_method = second_best_rate[0].transaction_type
+    URL = Company.query.filter(Company.company_name == company).one().link
 
-    second_best_URL = Company.query.filter(Company.company_name == second_best_comp).one().link
+    if URL is None:
+        URL = "http://" + company.replace(" ", "") + ".com"
 
-    if second_best_URL is None:
+    receive_date_time = calculate_receive_time(transaction_speed, receivers_timezone)
 
-        second_best_URL = "http://" + second_best_comp.replace(" ", "") + ".com"
-
-    second_current_time_in_utc = Delorean()
-
-    if second_best_transaction_speed == 'Less than one hour':
-        second_current_time_in_utc += timedelta(hours=1)
-    elif second_best_transaction_speed == '2 days':
-        second_current_time_in_utc += timedelta(days=2)
-    elif second_best_transaction_speed == '3-5 days':
-        second_current_time_in_utc += timedelta(days=5)
-    elif second_best_transaction_speed == 'Same day':
-        second_current_time_in_utc += timedelta(hours=2)
-    elif second_best_transaction_speed == 'Next day':
-        second_current_time_in_utc += timedelta(hours=24)
-    elif second_best_transaction_speed == '6 days or more':
-        second_current_time_in_utc += timedelta(days=6)
-
-    second_estimated_receive_date_time = (second_current_time_in_utc.shift(receivers_timezone))
-    second_estimated_receive_date_time = second_estimated_receive_date_time.format_datetime(locale='en_US')
-
-    return {'second_best_comp': second_best_comp,
-            'second_best_fee': second_best_fee,
-            'second_best_estimate_fees': second_best_estimate_fees,
-            'second_best_total': second_best_total,
-            'second_best_transaction_speed': second_best_transaction_speed,
-            'second_best_payment_method': second_best_payment_method,
-            'second_estimated_receive_date_time': second_estimated_receive_date_time,
-            'second_best_URL': second_best_URL,
+    return {'second_best_comp': company,
+            'second_best_fee': fee,
+            'second_best_estimate_fees': estimate_fees,
+            'second_best_total': total,
+            'second_best_transaction_speed': transaction_speed,
+            'second_best_payment_method': payment_method,
+            'second_estimated_receive_date_time': receive_date_time,
+            'second_best_URL': URL,
             }
 
-def calculate_receive_time():
+
+def calculate_receive_time(transaction_speed, receivers_timezone):
     """Given a rate, calculate the receive time"""
     time_in_utc = Delorean()
+
+    if transaction_speed == 'Less than one hour':
+        time_in_utc += timedelta(hours=1)
+    elif transaction_speed == '2 days':
+        time_in_utc += timedelta(days=2)
+    elif transaction_speed == '3-5 days':
+        time_in_utc += timedelta(days=5)
+    elif transaction_speed == 'Same day':
+        time_in_utc += timedelta(hours=2)
+    elif transaction_speed == 'Next day':
+        time_in_utc += timedelta(hours=24)
+    elif transaction_speed == '6 days or more':
+        time_in_utc += timedelta(days=6)
+
+    receive_date_time = (time_in_utc.shift(receivers_timezone))
+    receive_date_time = receive_date_time.format_datetime(locale='en_US')
+
+    return receive_date_time
 
 
 if __name__ == "__main__":
