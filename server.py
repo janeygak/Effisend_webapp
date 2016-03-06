@@ -1,9 +1,9 @@
-from jinja2 import StrictUndefined
+# from jinja2 import StrictUndefined
 
-from flask import Flask, flash, render_template, request, redirect, session, url_for, jsonify
+from flask import Flask, flash, render_template, request, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import connect_to_db, db, Country, Rate, RicePrice, CountryCode, WaterPrice, Company, CostOfLiving
+from model import connect_to_db, db, Country, Rate, RicePrice, CountryCode, WaterPrice, Company
 
 import math
 
@@ -26,7 +26,7 @@ app.secret_key = "ABC"
 
 @app.route('/')
 def index():
-    """Homepage."""
+    """Redirects to the search page."""
 
     return redirect('/search')
 
@@ -180,28 +180,6 @@ def best_rate():
 
         best_URL = "http://" + best_company.replace(" ", "") + ".com"
 
-    #set the time the transaction will take to a variable
-    transaction_speed = result.first().transaction_time
-    #create a new variable that is set to the current time in UTC
-    current_time_in_utc = Delorean()
-    #do some time math to determine how long the transaction will take
-    if transaction_speed == 'Less than one hour':
-        current_time_in_utc += timedelta(hours=1)
-    elif transaction_speed == '2 days':
-        current_time_in_utc += timedelta(days=2)
-    elif transaction_speed == '3-5 days':
-        current_time_in_utc += timedelta(days=5)
-    elif transaction_speed == 'Same day':
-        current_time_in_utc += timedelta(hours=2)
-    elif transaction_speed == 'Next day':
-        current_time_in_utc += timedelta(hours=24)
-    elif transaction_speed == '6 days or more':
-        current_time_in_utc += timedelta(days=6)
-
-    #since we were using UTC time as a based, now we shift it over to the receivers timezone
-    estimated_receive_date_time = (current_time_in_utc.shift(receivers_timezone))
-    estimated_receive_date_time = estimated_receive_date_time.format_datetime(locale='en_US')
-
     #set the queried rate payment method to a variable
     payment_method = result.first().transaction_type
 
@@ -238,7 +216,31 @@ def best_rate():
 
     second_best_data = find_second_best_rate(result, amount, receivers_timezone)
 
-    second_best_comp, second_best_fee, second_best_estimate_fees, second_best_total, second_best_transaction_speed, second_best_payment_method, second_estimated_receive_date_time, second_best_URL = second_best_data
+    # second_best_comp, second_best_fee, second_best_estimate_fees, second_best_total, second_best_transaction_speed, second_best_payment_method, second_estimated_receive_date_time, second_best_URL = second_best_data
+
+    #set the time the transaction will take to a variable
+    transaction_speed = result.first().transaction_time
+    #create a new variable that is set to the current time in UTC
+    current_time_in_utc = Delorean()
+    #do some time math to determine how long the transaction will take
+    if transaction_speed == 'Less than one hour':
+        current_time_in_utc += timedelta(hours=1)
+    elif transaction_speed == '2 days':
+        current_time_in_utc += timedelta(days=2)
+    elif transaction_speed == '3-5 days':
+        current_time_in_utc += timedelta(days=5)
+    elif transaction_speed == 'Same day':
+        current_time_in_utc += timedelta(hours=2)
+    elif transaction_speed == 'Next day':
+        current_time_in_utc += timedelta(hours=24)
+    elif transaction_speed == '6 days or more':
+        current_time_in_utc += timedelta(days=6)
+
+    #since we were using UTC time as a based, now we shift it over to the receivers timezone
+    estimated_receive_date_time = (current_time_in_utc.shift(receivers_timezone))
+    estimated_receive_date_time = estimated_receive_date_time.format_datetime(locale='en_US')
+
+    print second_best_data
 
     return render_template("best_rate.html",
                            amount=amount,
@@ -255,14 +257,7 @@ def best_rate():
                            amt_of_rice_whole=amt_of_rice_whole,
                            amt_of_rice=amt_of_rice,
                            days_fed=days_fed,
-                           second_best_comp=second_best_comp,
-                           second_best_fee=second_best_fee,
-                           second_best_estimate_fees=second_best_estimate_fees,
-                           second_best_total=second_best_total,
-                           second_best_transaction_speed=second_best_transaction_speed,
-                           second_best_payment_method=second_best_payment_method,
-                           second_estimated_receive_date_time=second_estimated_receive_date_time,
-                           second_best_URL=second_best_URL,
+                           second_best_data=second_best_data,
                            currency=currency)
 
 
@@ -314,7 +309,19 @@ def find_second_best_rate(result, amount, receivers_timezone):
     second_estimated_receive_date_time = (second_current_time_in_utc.shift(receivers_timezone))
     second_estimated_receive_date_time = second_estimated_receive_date_time.format_datetime(locale='en_US')
 
-    return second_best_comp, second_best_fee, second_best_estimate_fees, second_best_total, second_best_transaction_speed, second_best_payment_method, second_estimated_receive_date_time, second_best_URL
+    return {'second_best_comp': second_best_comp,
+            'second_best_fee': second_best_fee,
+            'second_best_estimate_fees': second_best_estimate_fees,
+            'second_best_total': second_best_total,
+            'second_best_transaction_speed': second_best_transaction_speed,
+            'second_best_payment_method': second_best_payment_method,
+            'second_estimated_receive_date_time': second_estimated_receive_date_time,
+            'second_best_URL': second_best_URL,
+            }
+
+def calculate_receive_time():
+    """Given a rate, calculate the receive time"""
+    time_in_utc = Delorean()
 
 
 if __name__ == "__main__":

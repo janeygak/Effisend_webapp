@@ -137,7 +137,7 @@
         <div class="col-xs-12 col-md-8" id="second-best-rate-section">
             <h2>Your Second Best Option:</h2>
 
-            <h3>{{ second_best_comp }} charges on average {{ second_best_fee }}% for your transaction.</h3>
+            <h3>{{ second_best_data['second_best_comp'] }} charges on average {{ second_best_data['second_best_fee'] }}% for your transaction.</h3>
             <a href="#" class="details-link">Show Details</a>
             <div class="rate-details" style="display: none;">
 
@@ -148,7 +148,7 @@
                     Estimated fees:
                 </td>
                 <td>
-                  ${{ second_best_estimate_fees }}
+                  ${{ second_best_data['second_best_estimate_fees'] }}
                 </td>
               </tr>
               <tr>
@@ -156,7 +156,7 @@
                 Total transaction cost:
                 </td>
                 <td>
-                  ${{ second_best_total }}
+                  ${{ second_best_data['second_best_total'] }}
                 </td>
               </tr>
               <tr>
@@ -164,14 +164,14 @@
                 Transaction speed: 
                 </td>
                <td>
-                {{ second_best_transaction_speed }}
+                {{ second_best_data['second_best_transaction_speed'] }}
                 </td>
               </tr>
               <tr>
                 <td>
                 Estimated Receive Time in {{ session['country'] }}: 
                 </td>
-                  <td>{{ second_estimated_receive_date_time }}
+                  <td>{{ second_best_data['second_estimated_receive_date_time'] }}
                 </td>
               </tr>
               <tr>
@@ -179,7 +179,7 @@
             Send/Receive payment method: 
               </td>
               <td>
-            {{ second_best_payment_method }} 
+            {{ second_best_data['second_best_payment_method'] }} 
               </td>
             </tr>
              <tr>
@@ -213,7 +213,7 @@
                   <p>(Did you know? You can buy {{ num_of_bottles }} 1.5 liter bottles of water in {{ session['country'] }} with ${{ amount }}! That's enough water for one person for {{ water_needed }} days.)</p>
                 {% endif %}
             <!-- Button trigger modal --><BR><BR>
-                     <a href="{{ second_best_URL }}" role="button" class="btn btn-primary" target="newwindow">
+                     <a href="{{ second_best_data['second_best_URL'] }}" role="button" class="btn btn-primary" target="newwindow2">
           Make Transfer
             </a> 
             <button type="button" class="btn btn-info" data-toggle="modal" data-target="#secondbestModal">
