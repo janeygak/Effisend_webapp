@@ -183,43 +183,16 @@ def best_rate():
     #set the queried rate payment method to a variable
     payment_method = results.first().transaction_type
 
-    #if receiver's country water price is in table, query the table
-    result_country_water_price = WaterPrice.query.filter_by(country_name=country_name)
-
-    if result_country_water_price.count() > 0:
-
-        num_of_bottles = (amount / result_country_water_price.one().water_price)
-
-        num_of_bottles = int(num_of_bottles)
-        #calculate how much water the user's amount will buy and last for one person
-        water_needed = num_of_bottles / 2
-
-        water_needed = int(water_needed)
-
-    #query the price of rice table using the receiver's country
-    result_country_rice_price = RicePrice.query.filter_by(country_name=country_name)
-
-    """if the receiver's country's rice price is in the table, calculate how much rice the sender's
-    amount will buy and how many days it will feed a family of four"""
-
-    if result_country_rice_price.count() > 0:
-
-        amt_of_rice = (amount / result_country_rice_price.one().rice_price)
-
-        amt_of_rice = (math.ceil(amt_of_rice*100)/100)
-
-        amt_of_rice_whole = int(amt_of_rice)
-
-        days_fed = amt_of_rice / 1.6
-
-        days_fed = int(days_fed)
-
-    second_best_data = find_second_best_rate(results, amount, receivers_timezone)
-
     #set the time the transaction will take to a variable
     transaction_speed = results.first().transaction_time
 
     receive_date_time = calculate_receive_time(transaction_speed, receivers_timezone)
+
+    amt_of_rice, days_fed = calculate_rice_price(country_name, amount)
+
+    second_best_data = find_second_best_rate(results, amount, receivers_timezone)
+
+    num_of_bottles, water_needed = calculate_water_price(country_name, amount)
 
     return render_template("best_rate.html",
                            amount=amount,
@@ -233,11 +206,54 @@ def best_rate():
                            payment_method=payment_method,
                            num_of_bottles=num_of_bottles,
                            water_needed=water_needed,
-                           amt_of_rice_whole=amt_of_rice_whole,
                            amt_of_rice=amt_of_rice,
                            days_fed=days_fed,
                            second_best_data=second_best_data,
                            currency=currency)
+
+
+def calculate_water_price(country_name, amount):
+    """Calculate the price of water in receiver's country"""
+
+    #if receiver's country water price is in table, query the table
+    country_water_price = WaterPrice.query.filter_by(country_name=country_name)
+
+    if country_water_price.count() > 0:
+
+        num_of_bottles = (amount / country_water_price.one().water_price)
+
+        num_of_bottles = int(num_of_bottles)
+        #calculate how much water the user's amount will buy and last for one person
+        water_needed = num_of_bottles / 2
+
+        water_needed = int(water_needed)
+
+    return num_of_bottles, water_needed
+
+
+def calculate_rice_price(country_name, amount):
+    """Given the sending amount and receiver's country, calculate the price
+    of rice there and number of days it could feed a family, using data from freerice.com"""
+
+    #query the price of rice table using the receiver's country
+    country_rice_price = RicePrice.query.filter_by(country_name=country_name)
+
+    """if the receiver's country's rice price is in the table, calculate how much rice the sender's
+    amount will buy and how many days it will feed a family of four"""
+
+    if country_rice_price.count() > 0:
+
+        amt_of_rice = (amount / country_rice_price.one().rice_price)
+
+        amt_of_rice = (math.ceil(amt_of_rice*100)/100)
+
+        amt_of_rice = int(amt_of_rice)
+
+        days_fed = amt_of_rice / 1.6
+
+        days_fed = int(days_fed)
+
+    return amt_of_rice, days_fed
 
 
 def find_second_best_rate(results, amount, receivers_timezone):
