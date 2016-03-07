@@ -6,14 +6,15 @@
     <h1>I want to send</h1>
 <BR>
 
-<form class="form-inline" action="/best_rate" method="get">
+<form id="rate-search" class="form-inline" action="/best_rate" method="get">
 
 <div class="form-group">
     <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
     <div class="input-group">
       <div class="input-group-addon">$</div>
       <input type="text" class="form-control" id="amount" placeholder="" name="amount">
-      <div class="input-group-addon">.00</div>
+      <div class="input-group-addon">.00</div> 
+
     </div>
   </div>
 
@@ -285,7 +286,7 @@ and need the funds available<BR>
 
 <BR><BR>
 
-<input type="submit" role="button" class="btn btn-primary" id="criteria_submit" value="Find me the best rate!">
+<input type="submit" role="button" class="btn btn-primary" id="criteriaSubmit" value="Find me the best rate!">
 
 </form>
 

@@ -120,7 +120,7 @@
                               <input type="text" id="sendtoNo" name="input_number"><br><br>
                               <input type="hidden" id="company" name="company" value="{{ best_data['best_company'] }}"><br>
                               <input type="hidden" id="time" name="time" value="{{ best_data['receive_date_time'] }}"><BR>
-                          <input type="submit" value="Submit">
+                          <input type="submit" value="Send SMS!">
                         </form>
 
                         </p>
@@ -135,7 +135,7 @@
     <BR><BR>
       <div class="row">
         <div class="col-xs-12 col-md-8" id="second-best-rate-section">
-            <h2>Your Second Best Option:</h2>
+            <h2>Your Next Best Option:</h2>
 
             <h3>{{ second_best_data['second_best_comp'] }} charges on average {{ second_best_data['second_best_fee'] }}% for your transaction.</h3>
             <a href="#" class="details-link">Show Details</a>
@@ -171,7 +171,7 @@
                 <td>
                 Estimated Receive Time in {{ session['country'] }}: 
                 </td>
-                  <td>{{ second_best_data['second_estimated_receive_date_time'] }}
+                  <td>{{ second_best_data['receive_date_time'] }}
                 </td>
               </tr>
               <tr>

@@ -64,3 +64,4 @@ $('.details-link').click(function() {
         }
     })
 })
+
