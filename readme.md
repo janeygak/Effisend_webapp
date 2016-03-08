@@ -8,7 +8,9 @@ Using data from the World Bank, Effisend visualizes how much money is sent overs
 
 ## Installation
 
-Install the required libraries from the requirements.txt and you're good to go.
+Install the required libraries from the requirements.txt. 
+Register an account at Twilio to use the send sms api.
+Register an account at currency layer to use realtime currency exchange api.
 
 
 ## Contributing

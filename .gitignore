@@ -1,7 +1,0 @@
-/env
-.DS_Store
-*.pyc
-secrets.sh
-*.zip
-ngrok
-node_modules
