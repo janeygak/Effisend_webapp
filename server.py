@@ -1,12 +1,9 @@
 # from jinja2 import StrictUndefined
 
-from flask import Flask, flash, render_template, request, redirect, session, jsonify
+from flask import Flask, flash, render_template, request, redirect, session, jsonify, g
 from flask_debugtoolbar import DebugToolbarExtension
-
 from model import connect_to_db, db, Country, Rate, RicePrice, CountryCode, WaterPrice, Company
-
 import math
-
 from datetime import timedelta
 from pytz import country_timezones
 from delorean import Delorean
@@ -19,9 +16,13 @@ app = Flask(__name__)
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = "ABC"
 
-# Normally, if you use an undefined variable in Jinja2, it fails silently.
-# This is horrible. Fix this so that, instead, it raises an error.
 # app.jinja_env.undefined = StrictUndefined
+JS_TESTING_MODE = False
+
+
+@app.before_request
+def add_tests():
+    g.jasmine_tests = JS_TESTING_MODE
 
 
 @app.route('/')
@@ -201,7 +202,6 @@ def get_best_rate(results, amount, use_under_200, receivers_timezone):
 
         best_URL = "http://" + best_company.replace(" ", "") + ".com"
 
-    print best_URL
     #set the queried rate payment method to a variable
     payment_method = results.first().transaction_type
 
@@ -341,4 +341,10 @@ if __name__ == "__main__":
 
     app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
-    app.run()
+    # app.run()
+
+    import sys
+    if sys.argv[-1] == "jstest":
+        JS_TESTING_MODE = True
+
+    app.run(debug=True)

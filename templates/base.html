@@ -18,8 +18,20 @@
               <script src="{{ url_for('static', filename='scripts/app.js') }}"></script>
               <script src="{{ url_for('static', filename='scripts/spin.js') }}"></script>
               <script src="{{ url_for('static', filename='scripts/jquery.spin.js') }}"></script>
+
+
 </head>
 <body>
+
+
+{% if g.jasmine_tests %}
+    <!-- stuff for testing -->   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.4.1/jasmine.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.4.1/jasmine.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.4.1/jasmine-html.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.4.1/boot.js"></script>
+{% endif %}
+
     <div class="container">
       <div class="row">
     <div class="col-xs-12 col-md-8"> 
@@ -36,6 +48,7 @@
                 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
         </div>
     
+    <div class="container">
 
     {% block content %}
     {% endblock %}
