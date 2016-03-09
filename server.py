@@ -155,6 +155,10 @@ def get_user_inputs():
     else:
         results = Rate.query.filter_by(country_code=country).order_by(column_to_use)
 
+    #if inputed country is not in database then redirect to sorry page
+    if results.count() == 0:
+        return redirect('/sorry')
+
     best_data = get_best_rate(results, amount, use_under_200, receivers_timezone)
 
     amt_of_rice, days_fed = calculate_rice_price(country_name, amount)
@@ -176,13 +180,7 @@ def get_user_inputs():
 
 def get_best_rate(results, amount, use_under_200, receivers_timezone):
 
-    #if inputed country is not in database then redirect to sorry page
-    if results.count() == 0:
-
-        return redirect('/sorry')
-    #if country in database, continue query for best company
-    else:
-        best_company = str(results.first().company)
+    best_company = str(results.first().company)
     #assigns what the best rate is based on the given amount
     if use_under_200:
         best_rate = str(results.first().rate_under_200)
@@ -267,7 +265,11 @@ def calculate_rice_price(country_name, amount):
 
 def get_second_best_rate(results, amount, receivers_timezone):
     """Given user's preferences, return the second best option"""
-    second_best_rate = results.offset(1).limit(1).all()
+
+    if results.count() == 0:
+        return redirect('/sorry')
+    else:
+        second_best_rate = results.offset(1).limit(1).all()
 
     company = second_best_rate[0].company
 

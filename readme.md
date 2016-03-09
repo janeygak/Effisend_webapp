@@ -24,9 +24,9 @@ Register an account at currency layer to use realtime currency exchange api.
 
 ## Credits
 
-All rates and money transfer data come from the World Bank. The prices of rice and water are crowdsourced from Numbeo. 
+All rates and money transfer data come from the World Bank. The prices of rice and water are crowdsourced from Numbeo. The amount of rice a family can live off is from 
+the World Food Program. 
 
 
 </content>
-  <tabTrigger>readme</tabTrigger>
 </snippet>

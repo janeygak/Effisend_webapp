@@ -12,7 +12,7 @@
 
         <h1>Your Best Rate</h1>
 
-        <h2>{{ best_data['best_company'] }} charges on average {{ best_data['best_rate'] }}% for your transaction.</h2>
+        <h2><span id="best-company">{{ best_data['best_company'] }}</span> charges on average <span id="best-rate">{{ best_data['best_rate'] }}</span>% for your transaction.</h2>
     </div>
     <div class="col-xs-6 col-md-4">
 
@@ -26,7 +26,7 @@
 
   <div class="row">
     <div class="col-xs-12 col-md-8">
-      <a href="#" class="details-link">Show Details</a>
+      <a href="#" class="details-link" id="best-rate-details">Show Details</a>
         <div class="rate-details" style="display: none;">
           <table class="table table-hover">
             <ul>
@@ -35,7 +35,7 @@
                     Estimated fees:
                 </td>
                 <td>
-                  ${{ best_data['estimate_fees'] }}
+                  $<span id="best-estimate-fees">{{ best_data['estimate_fees'] }}</span>
                 </td>
               </tr>
               <tr>
