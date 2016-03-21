@@ -21,6 +21,9 @@ Install the required libraries from the requirements.txt.
 Register an account at Twilio to use the send sms api.
 Register an account at currency layer to use realtime currency exchange api.
 
+Create a sql database called "money transfers" and run the models by typing "python model.py" in your terminal.
+
+Run the server by typing "python server.py" in your terminal.
 
 ## Contributing
 
