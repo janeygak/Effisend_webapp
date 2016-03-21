@@ -9,7 +9,7 @@ Using data from the World Bank, Effisend visualizes how much money is sent overs
 
 ## Screenshots
 
-![alt tag](https://cloud.githubusercontent.com/assets/14094159/13935038/80ef5474-ef72-11e5-963c-f486afc707e6.png =100x200) 
+<img src="https://cloud.githubusercontent.com/assets/14094159/13935038/80ef5474-ef72-11e5-963c-f486afc707e6.png" height="25%" width="50%"> 
 
 ## Installation
 
