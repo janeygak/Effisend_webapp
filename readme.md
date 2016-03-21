@@ -2,9 +2,14 @@
   <content>
 # EffiSend Web App
 
+
 Effisend is a webapp used to find the best rates for transferring money overseas. Users can look up rates based on their payment method or how fast funds need to be available. After a transfer, the user can then have Effisend send an SMS to the receiver with the amount and time funds will be available in their time zone. The app also gives users a conversion of their money into a familiar commodity in the destination country as a reference.
 
 Using data from the World Bank, Effisend visualizes how much money is sent overseas as well as the cost of living in each country so users can understand how far their remittances will go.
+
+## Screenshots
+
+![alt tag](https://cloud.githubusercontent.com/assets/14094159/13935038/80ef5474-ef72-11e5-963c-f486afc707e6.png)
 
 ## Installation
 

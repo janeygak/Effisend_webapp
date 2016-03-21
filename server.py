@@ -334,7 +334,7 @@ def calculate_receive_time(transaction_speed, receivers_timezone):
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
     # that we invoke the DebugToolbarExtension
-    app.debug = True
+    app.debug = False
 
     connect_to_db(app)
 
@@ -343,10 +343,10 @@ if __name__ == "__main__":
 
     app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
-    # app.run()
+    app.run()
 
-    import sys
-    if sys.argv[-1] == "jstest":
-        JS_TESTING_MODE = True
+    # import sys
+    # if sys.argv[-1] == "jstest":
+    #     JS_TESTING_MODE = True
 
-    app.run(debug=True)
+    # app.run(debug=True)
