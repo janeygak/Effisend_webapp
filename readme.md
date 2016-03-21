@@ -11,6 +11,10 @@ Using data from the World Bank, Effisend visualizes how much money is sent overs
 
 <img src="https://cloud.githubusercontent.com/assets/14094159/13935038/80ef5474-ef72-11e5-963c-f486afc707e6.png" height="20%" width="20%"> 
 
+<img src="https://cloud.githubusercontent.com/assets/14094159/13935037/80ebc71e-ef72-11e5-9944-148378ded835.png" height="15%" width="15%">
+
+<img src="https://cloud.githubusercontent.com/assets/14094159/13935036/80e78ac8-ef72-11e5-96c9-69e6e61ff618.png" height="15%" width="15%">
+
 ## Installation
 
 Install the required libraries from the requirements.txt. 
